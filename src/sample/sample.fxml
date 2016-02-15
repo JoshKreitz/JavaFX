@@ -5,13 +5,18 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:controller="sample.Controller" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1">
+<?import javafx.collections.FXCollections?>
+<?import sample.Movie?>
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
    <top>
-      <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+      <VBox prefWidth="100.0" BorderPane.alignment="CENTER">
          <children>
             <MenuBar>
               <menus>
@@ -32,10 +37,13 @@
                 </Menu>
               </menus>
             </MenuBar>
-            <HBox prefHeight="100.0" prefWidth="200.0">
+            <HBox prefWidth="200.0">
                <children>
                   <Button mnemonicParsing="false" onAction="#addMovie" text="Add Movie!" />
                </children>
+               <VBox.margin>
+                  <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+               </VBox.margin>
             </HBox>
          </children>
          <opaqueInsets>
@@ -46,4 +54,50 @@
          </BorderPane.margin>
       </VBox>
    </top>
+   <center>
+      <TableView fx:id="mainTable" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+        <columns>
+          <TableColumn maxWidth="300.0" minWidth="75.0" prefWidth="75.0" text="Title">
+              <cellValueFactory>
+                  <PropertyValueFactory property="title" />
+              </cellValueFactory>
+          </TableColumn>
+            <TableColumn maxWidth="300.0" minWidth="75.0" prefWidth="75.0" text="Genre">
+                <cellValueFactory>
+                    <PropertyValueFactory property="genre" />
+                </cellValueFactory>
+            </TableColumn>
+            <TableColumn maxWidth="300.0" minWidth="75.0" prefWidth="75.0" text="Rating">
+                <cellValueFactory>
+                    <PropertyValueFactory property="rating" />
+                </cellValueFactory>
+            </TableColumn>
+            <TableColumn maxWidth="300.0" minWidth="75.0" prefWidth="75.0" text="Length">
+                <cellValueFactory>
+                    <PropertyValueFactory property="length" />
+                </cellValueFactory>
+            </TableColumn>
+            <TableColumn maxWidth="300.0" minWidth="75.0" prefWidth="75.0" text="Director">
+                <cellValueFactory>
+                    <PropertyValueFactory property="director" />
+                </cellValueFactory>
+            </TableColumn>
+            <TableColumn maxWidth="300.0" minWidth="100.0" prefWidth="100.0" text="Starring Actor">
+                <cellValueFactory>
+                    <PropertyValueFactory property="starringActor" />
+                </cellValueFactory>
+            </TableColumn>
+            <TableColumn maxWidth="300.0" minWidth="75.0" prefWidth="75.0" text="Rating /10">
+                <cellValueFactory>
+                    <PropertyValueFactory property="ratingOutOfTen" />
+                </cellValueFactory>
+            </TableColumn>
+        </columns>
+          <items>
+              <FXCollections fx:factory="observableArrayList">
+                  <Movie title="V for Vendetta" genre="Action/Adventure" rating="R" length="1hr 30m" director="bob" starringActor="bawwss" scoreOutOfTen="10"/>
+              </FXCollections>
+          </items>
+      </TableView>
+   </center>
 </BorderPane>
