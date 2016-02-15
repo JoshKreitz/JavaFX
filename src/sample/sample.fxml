@@ -10,10 +10,9 @@
 <?import javafx.scene.control.cell.PropertyValueFactory?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<?import javafx.collections.FXCollections?>
-<?import sample.Movie?>
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
    <top>
       <VBox prefWidth="100.0" BorderPane.alignment="CENTER">
@@ -37,9 +36,12 @@
                 </Menu>
               </menus>
             </MenuBar>
-            <HBox prefWidth="200.0">
+            <HBox prefWidth="200.0" spacing="10.0">
                <children>
-                  <Button mnemonicParsing="false" onAction="#addMovie" text="Add Movie!" />
+                  <Button mnemonicParsing="false" onAction="#showMoviePopout" text="Add Movie" />
+                  <Region minWidth="-Infinity" prefWidth="-Infinity" HBox.hgrow="ALWAYS" />
+                  <Button fx:id="editButton" disable="true" mnemonicParsing="false" text="Edit" onAction="#editSelectedItem"/>
+                  <Button fx:id="deleteButton" disable="true" mnemonicParsing="false" text="Remove" onAction="#deleteSelectedItems"/>
                </children>
                <VBox.margin>
                   <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
@@ -57,12 +59,12 @@
    <center>
       <TableView fx:id="mainTable" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
         <columns>
-          <TableColumn maxWidth="300.0" minWidth="75.0" prefWidth="75.0" text="Title">
+          <TableColumn maxWidth="500.0" minWidth="200.0" prefWidth="200.0" text="Title">
               <cellValueFactory>
                   <PropertyValueFactory property="title" />
               </cellValueFactory>
           </TableColumn>
-            <TableColumn maxWidth="300.0" minWidth="75.0" prefWidth="75.0" text="Genre">
+            <TableColumn maxWidth="300.0" minWidth="150.0" prefWidth="150.0" text="Genre">
                 <cellValueFactory>
                     <PropertyValueFactory property="genre" />
                 </cellValueFactory>
@@ -89,15 +91,10 @@
             </TableColumn>
             <TableColumn maxWidth="300.0" minWidth="75.0" prefWidth="75.0" text="Rating /10">
                 <cellValueFactory>
-                    <PropertyValueFactory property="ratingOutOfTen" />
+                    <PropertyValueFactory property="scoreOutOfTen" />
                 </cellValueFactory>
             </TableColumn>
         </columns>
-          <items>
-              <FXCollections fx:factory="observableArrayList">
-                  <Movie title="V for Vendetta" genre="Action/Adventure" rating="R" length="1hr 30m" director="bob" starringActor="bawwss" scoreOutOfTen="10"/>
-              </FXCollections>
-          </items>
       </TableView>
    </center>
 </BorderPane>

@@ -3,13 +3,13 @@ package sample;
 public class Movie {
 
     private String title, genre, rating, length, director, starringActor;
-    private int scoreOutOfTen;
+    private double scoreOutOfTen;
 
     public Movie(){
         this("", "", "", "", "", "", 0);
     }
 
-    public Movie(String title, String genre, String rating, String length, String director, String starringActor, int scoreOutOfTen){
+    public Movie(String title, String genre, String rating, String length, String director, String starringActor, double scoreOutOfTen){
         this.title = title;
         this.genre = genre;
         this.rating = rating;
@@ -67,11 +67,14 @@ public class Movie {
         this.starringActor = starringActor;
     }
 
-    public int getScoreOutOfTen() {
-        return scoreOutOfTen;
+    public double getScoreOutOfTen() {
+        String score = "" + scoreOutOfTen;
+        if(score.length() > 4)
+            return scoreOutOfTen = Double.parseDouble(score.substring(0, 4));
+        else return scoreOutOfTen;
     }
 
-    public void setScoreOutOfTen(int scoreOutOfTen) {
+    public void setScoreOutOfTen(double scoreOutOfTen) {
         this.scoreOutOfTen = scoreOutOfTen;
     }
 
