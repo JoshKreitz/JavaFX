@@ -81,4 +81,33 @@ public class Movie {
     public String toString(){
         return title + " " + genre + " " + rating + " " + length + " " + director + " " + starringActor + " " + scoreOutOfTen + "/10";
     }
+
+    public void changeProptery(String propertyName, String newVal){
+        switch(propertyName){
+            case "title":
+                title = newVal;
+                break;
+            case "genre":
+                genre = newVal;
+                break;
+            case "rating":
+                rating = newVal;
+                break;
+            case "length":
+                length = newVal;
+                break;
+            case "director":
+                director = newVal;
+                break;
+            case "starringActor":
+                starringActor = newVal;
+                break;
+            case "scoreOutOfTen":
+                scoreOutOfTen = Double.parseDouble(newVal);
+                break;
+            default:
+                System.out.println("Recieved invalid property name: " + propertyName);
+                break;
+        }
+    }
 }

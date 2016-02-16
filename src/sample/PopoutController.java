@@ -14,7 +14,6 @@ public class PopoutController implements Initializable {
 
     public static String labelText = "", titleText = "", genreText = "", lengthText = "", ratingText = "", directorText = "", starringActorText = "", createButtonText = "";
     public static double scoreNum = 0;
-    public static boolean editing = false;
 
     public Label lbl;
     public TextField tfTitle, tfLength, tfDirector, tfStarringActor;
@@ -34,8 +33,6 @@ public class PopoutController implements Initializable {
         tfStarringActor.setText(starringActorText);
         sScore.setValue(scoreNum);
 
-        if(editing)
-            CancelButton.setDisable(true);
         CreateButton.setText(createButtonText);
 
         labelText = titleText = genreText = lengthText = ratingText = directorText = starringActorText = "";
@@ -46,21 +43,23 @@ public class PopoutController implements Initializable {
     public void addMovie(){
         if(tfTitle.getText().trim().equals("")){
             tfTitle.setStyle("-fx-background-color: red");
-            tfTitle.focusedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                    if(newValue) {
-                        tfTitle.setStyle(null);
-                        tfTitle.setText("");
-                    }
+            tfTitle.focusedProperty().addListener((observable, oldValue, newValue) -> {
+                if(newValue) {
+                    tfTitle.setStyle(null);
+                    tfTitle.setText("");
                 }
             });
         }
-        else
-            Controller.addMovie(new Movie(tfTitle.getText(), cbGenre.getValue(), cbRating.getValue(), tfLength.getText(), tfDirector.getText(), tfStarringActor.getText(), (double)sScore.getValue()));
+        else{
+            String temp;
+            if((temp = cbRating.getValue()) == null)
+                temp = "";
+            Controller.addMovie(new Movie(tfTitle.getText(), cbGenre.getValue(), temp, tfLength.getText(), tfDirector.getText(), tfStarringActor.getText(), sScore.getValue()));
+        }
+
     }
 
     public void closePopout(){
-        Controller.closePopout();
+        Controller.closePopout(false);
     }
 }

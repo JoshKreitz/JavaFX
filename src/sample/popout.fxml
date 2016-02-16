@@ -12,11 +12,10 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox fx:controller="sample.PopoutController" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="300" minWidth="250" prefHeight="400.0" prefWidth="600.0" spacing="8.0" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
+<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="300" minWidth="250" prefHeight="400.0" prefWidth="600.0" spacing="8.0" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.PopoutController">
       <Label fx:id="lbl">
          <font>
-            <Font name="System Bold" size="15.0" />
+            <Font size="15.0" />
          </font>
       </Label>
       <TextField fx:id="tfTitle" promptText="Title" />
@@ -64,18 +63,13 @@
       <TextField fx:id="tfDirector" layoutX="10.0" layoutY="246.0" promptText="Director" />
       <TextField fx:id="tfStarringActor" layoutX="10.0" layoutY="258.0" promptText="Starring Actor" />
       <VBox alignment="CENTER" prefWidth="100.0">
-         <children>
             <Label text="Score out of Ten" />
             <Slider fx:id="sScore" blockIncrement="2.0" majorTickUnit="1.0" max="10.0" showTickLabels="true" showTickMarks="true" />
-         </children>
       </VBox>
       <HBox alignment="CENTER" prefWidth="200.0" spacing="10.0">
-         <children>
-            <Button fx:id="CreateButton" mnemonicParsing="false" text="Create" onAction="#addMovie"/>
-            <Button fx:id="CancelButton" mnemonicParsing="false" text="Cancel" onAction="#closePopout"/>
-         </children>
+            <Button fx:id="CreateButton" mnemonicParsing="false" onAction="#addMovie" text="Create" />
+            <Button fx:id="CancelButton" mnemonicParsing="false" onAction="#closePopout" text="Cancel" />
       </HBox>
-   </children>
    <VBox.margin>
       <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
    </VBox.margin>
