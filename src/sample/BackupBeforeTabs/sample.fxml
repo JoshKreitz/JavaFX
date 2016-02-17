@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.control.cell.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+   <top>
+      <VBox prefWidth="100.0" BorderPane.alignment="CENTER">
+            <HBox prefWidth="200.0" spacing="10.0">
+                  <Button mnemonicParsing="false" onAction="#showMoviePopout" text="Add Movie" />
+                  <Region minWidth="-Infinity" prefWidth="-Infinity" HBox.hgrow="ALWAYS" />
+                  <Button fx:id="editButton" disable="true" mnemonicParsing="false" onAction="#editSelectedItem" text="Edit" />
+                  <Button fx:id="deleteButton" disable="true" mnemonicParsing="false" onAction="#deleteSelectedItems" text="Remove" />
+               <VBox.margin>
+                  <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+               </VBox.margin>
+            </HBox>
+         <opaqueInsets>
+            <Insets right="8.0" top="8.0" />
+         </opaqueInsets>
+         <BorderPane.margin>
+            <Insets />
+         </BorderPane.margin>
+      </VBox>
+   </top>
+   <center>
+      <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+          <Tab text="Untitled Tab 1">
+                <TableView fx:id="mainTable" editable="true" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                    <columns>
+                        <TableColumn fx:id="TitleCol" maxWidth="500.0" minWidth="200.0" prefWidth="200.0" text="Title">
+                            <cellValueFactory>
+                                <PropertyValueFactory property="title" />
+                            </cellValueFactory>
+                        </TableColumn>
+                        <TableColumn fx:id="GenreCol" cellFactory="${TitleCol.cellFactory}" maxWidth="300.0" minWidth="150.0" prefWidth="150.0" text="Genre">
+                            <cellValueFactory>
+                                <PropertyValueFactory property="genre" />
+                            </cellValueFactory>
+                        </TableColumn>
+                        <TableColumn fx:id="RatingCol" cellFactory="${TitleCol.cellFactory}" maxWidth="300.0" minWidth="75.0" prefWidth="75.0" text="Rating">
+                            <cellValueFactory>
+                                <PropertyValueFactory property="rating" />
+                            </cellValueFactory>
+                        </TableColumn>
+                        <TableColumn fx:id="LengthCol" cellFactory="${TitleCol.cellFactory}" maxWidth="300.0" minWidth="75.0" prefWidth="75.0" text="Length">
+                            <cellValueFactory>
+                                <PropertyValueFactory property="length" />
+                            </cellValueFactory>
+                        </TableColumn>
+                        <TableColumn fx:id="DirectorCol" cellFactory="${TitleCol.cellFactory}" maxWidth="300.0" minWidth="75.0" prefWidth="75.0" text="Director">
+                            <cellValueFactory>
+                                <PropertyValueFactory property="director" />
+                            </cellValueFactory>
+                        </TableColumn>
+                        <TableColumn fx:id="StarringActorCol" cellFactory="${TitleCol.cellFactory}" maxWidth="300.0" minWidth="100.0" prefWidth="100.0" text="Starring Actor">
+                            <cellValueFactory>
+                                <PropertyValueFactory property="starringActor" />
+                            </cellValueFactory>
+                        </TableColumn>
+                        <TableColumn maxWidth="300.0" minWidth="75.0" prefWidth="75.0" text="Rating /10">
+                            <cellValueFactory>
+                                <PropertyValueFactory property="scoreOutOfTen" />
+                            </cellValueFactory>
+                        </TableColumn>
+                    </columns>
+                </TableView>
+          </Tab>
+          <Tab text="Untitled Tab 2">
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+          </Tab>
+      </TabPane>
+   </center>
+</BorderPane>

@@ -1,11 +1,7 @@
-package sample;
+package sample.BackupBeforeTabs;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -14,9 +10,6 @@ public class PopoutController implements Initializable {
 
     public static String labelText = "", titleText = "", genreText = "", lengthText = "", ratingText = "", directorText = "", starringActorText = "", createButtonText = "";
     public static double scoreNum = 0;
-
-    public static boolean addMovie;
-    public static Movie movieToAdd;
 
     public Label lbl;
     public TextField tfTitle, tfLength, tfDirector, tfStarringActor;
@@ -42,7 +35,7 @@ public class PopoutController implements Initializable {
         scoreNum = 0;
     }
 
-    //TODO stop this from making multiple listeners if failed via textbox
+    //TODO stop this from making multiple listeners
     public void addMovie(){
         if(tfTitle.getText().trim().equals("")){
             tfTitle.setStyle("-fx-background-color: red");
@@ -57,16 +50,12 @@ public class PopoutController implements Initializable {
             String temp;
             if((temp = cbRating.getValue()) == null)
                 temp = "";
-            System.out.println("2");
-            addMovie = true;
-            movieToAdd = new Movie(tfTitle.getText(), cbGenre.getValue(), temp, tfLength.getText(), tfDirector.getText(), tfStarringActor.getText(), sScore.getValue());
-            MovieTab.closePopout(true);
+            Controller.addMovie(new Movie(tfTitle.getText(), cbGenre.getValue(), temp, tfLength.getText(), tfDirector.getText(), tfStarringActor.getText(), sScore.getValue()));
         }
 
     }
 
     public void closePopout(){
-        addMovie = false;
-        MovieTab.closePopout(false);
+        Controller.closePopout(false);
     }
 }

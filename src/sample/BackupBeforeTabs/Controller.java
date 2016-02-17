@@ -1,4 +1,4 @@
-package sample;
+package sample.BackupBeforeTabs;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -8,7 +8,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.SelectionMode;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.stage.Modality;
@@ -21,17 +24,17 @@ import java.util.Scanner;
 
 public class Controller implements Initializable {
 
-    public static Stage popout;
+    private static Stage popout;
 
-    //TODO Java 9: draggable tabs
-    public TabPane tabPane;
-    public ObservableList<MovieTab> tabs = FXCollections.observableArrayList();
+    public TableView<Movie> mainTable = new TableView<>();
+    public static ObservableList<Movie> movies = FXCollections.observableArrayList();
 
     public Button editButton, deleteButton;
+    public TableColumn TitleCol, GenreCol, RatingCol, LengthCol, DirectorCol, StarringActorCol;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        /*Scanner in;
+        Scanner in;
         try {
             in = new Scanner(new File(System.getProperty("user.home") + "\\Movie List.txt"));
             String[] line;
@@ -43,58 +46,19 @@ public class Controller implements Initializable {
             e.printStackTrace();
         }
 
+        EventHandler<TableColumn.CellEditEvent> handler = e -> movies.get(e.getTablePosition().getRow()).changeProptery(((PropertyValueFactory) e.getTableColumn().getCellValueFactory()).getProperty(), (String) e.getNewValue());
 
+        TitleCol.setCellFactory(TextFieldTableCell.<Movie>forTableColumn());
+        TitleCol.setOnEditCommit(handler);
+        GenreCol.setOnEditCommit(handler);
+        RatingCol.setOnEditCommit(handler);
+        LengthCol.setOnEditCommit(handler);
+        DirectorCol.setOnEditCommit(handler);
+        StarringActorCol.setOnEditCommit(handler);
 
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            public void run() {
-                try {
-                    BufferedWriter out = new BufferedWriter(new FileWriter(System.getProperty("user.home") + "\\Movie List.txt"));
-                    for (Movie mv : movies) {
-                        out.write(mv.getTitle() + "~," + mv.getGenre() + "~," + mv.getRating() + "~," + mv.getLength() + "~," + mv.getDirector() + "~," + mv.getStarringActor() + "~," + mv.getScoreOutOfTen() + "~");
-                        out.newLine();
-                    }
-                    out.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        });*/
-        tabs.add(new MovieTab("To Watch"));
-        tabPane.getTabs().setAll(tabs);
-    }
-
-    public void showMoviePopout() {
-        PopoutController.labelText = "Add A Movie";
-        PopoutController.createButtonText = "Create";
-
-        popout = new Stage();
-        popout.initModality(Modality.APPLICATION_MODAL);
-        popout.setTitle("Add Movie");
-        popout.setOnCloseRequest(e -> MovieTab.closePopout(false));
-
-        try {
-            Parent root = FXMLLoader.load(getClass().getResource("popout.fxml"));
-            popout.setScene(new Scene(root, 250, 340));
-            popout.showAndWait();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        if(PopoutController.addMovie)
-            ((MovieTab)tabPane.getSelectionModel().getSelectedItem()).addMovie(PopoutController.movieToAdd);
-    }
-
-    public void editSelectedItem(){
-        ((MovieTab)tabPane.getSelectionModel().getSelectedItem()).editSelectedItem();
-    }
-
-    public void deleteSelectedItems(){
-        ((MovieTab)tabPane.getSelectionModel().getSelectedItem()).deleteSelectedItems();
-    }
-
-    public void addTab(){
-        MovieTab movieTab = new MovieTab("New Tab");
-        movieTab.getMainTable().getSelectionModel().getSelectedIndices().addListener(new ListChangeListener<Integer>() {
+        mainTable.setItems(movies);
+        mainTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        mainTable.getSelectionModel().getSelectedIndices().addListener(new ListChangeListener<Integer>() {
             private int size;
 
             @Override
@@ -109,16 +73,87 @@ public class Controller implements Initializable {
                     editButton.setDisable(true);
                 }
             }
+
         });
 
-        tabs.add(0, movieTab);
-        tabPane.getTabs().setAll(tabs);
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            public void run() {
+                try {
+                    BufferedWriter out = new BufferedWriter(new FileWriter(System.getProperty("user.home") + "\\Movie List.txt"));
+                    for (Movie mv : movies) {
+                        out.write(mv.getTitle() + "~," + mv.getGenre() + "~," + mv.getRating() + "~," + mv.getLength() + "~," + mv.getDirector() + "~," + mv.getStarringActor() + "~," + mv.getScoreOutOfTen() + "~");
+                        out.newLine();
+                    }
+                    out.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
-    public void delTab(){
-        if(tabs.size() > 1) {
-            tabs.remove(tabPane.getSelectionModel().getSelectedIndex());
-            tabPane.getTabs().setAll(tabs);
+    public void showMoviePopout() {
+        PopoutController.labelText = "Add A Movie";
+        PopoutController.createButtonText = "Create";
+
+        openPopout("Add Movie");
+    }
+
+    private static int indexOfEdittingRow = -1;
+    private static boolean hangingDelete = true;
+
+    public static void closePopout(boolean addedElement) {
+        if (!addedElement && indexOfEdittingRow != -1)
+            hangingDelete = false;
+        popout.hide();
+    }
+
+    public static void addMovie(Movie mv) {
+        if (indexOfEdittingRow != -1) {
+            movies.add(indexOfEdittingRow, mv);
+            indexOfEdittingRow = -1;
+        } else movies.add(mv);
+        closePopout(true);
+    }
+
+    public void deleteSelectedItems() {
+        mainTable.getItems().removeAll(mainTable.getSelectionModel().getSelectedItems());
+        mainTable.getSelectionModel().clearSelection();
+    }
+
+    public void editSelectedItem() {
+        Movie toBeEditted = mainTable.getSelectionModel().getSelectedItem();
+        indexOfEdittingRow = mainTable.getSelectionModel().getSelectedIndex();
+
+        PopoutController.labelText = "Edit Movie";
+        PopoutController.titleText = toBeEditted.getTitle();
+        PopoutController.genreText = toBeEditted.getGenre();
+        PopoutController.ratingText = toBeEditted.getRating();
+        PopoutController.lengthText = toBeEditted.getLength();
+        PopoutController.directorText = toBeEditted.getDirector();
+        PopoutController.starringActorText = toBeEditted.getStarringActor();
+        PopoutController.scoreNum = toBeEditted.getScoreOutOfTen();
+        PopoutController.createButtonText = "Edit";
+
+        openPopout("Edit Movie");
+
+        if (hangingDelete)
+            movies.remove(toBeEditted);
+        else hangingDelete = true;
+    }
+
+    private void openPopout(String title) {
+        popout = new Stage();
+        popout.initModality(Modality.APPLICATION_MODAL);
+        popout.setTitle(title);
+        popout.setOnCloseRequest(e -> closePopout(false));
+
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("popout.fxml"));
+            popout.setScene(new Scene(root, 250, 340));
+            popout.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
