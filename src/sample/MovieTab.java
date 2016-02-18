@@ -12,6 +12,10 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
+import javafx.util.converter.NumberStringConverter;
+
+import javax.swing.*;
 import java.io.IOException;
 
 //Draggable Tabs? http://stackoverflow.com/questions/16437615/javafx-tab-positioning-on-mouse-drag-drop
@@ -20,7 +24,7 @@ public class MovieTab extends Tab {
     public TableView<Movie> mainTable = new TableView<>();
     public ObservableList<Movie> movies = FXCollections.observableArrayList();
 
-    public TableColumn TitleCol, GenreCol, RatingCol, LengthCol, DirectorCol, StarringActorCol;
+    public TableColumn TitleCol, GenreCol, RatingCol, LengthCol, DirectorCol, StarringActorCol, ScoreCol;
 
     public Label titleLabel = new Label();
     public String tabTitle = "New Tab";
@@ -75,6 +79,18 @@ public class MovieTab extends Tab {
         LengthCol.setOnEditCommit(handler);
         DirectorCol.setOnEditCommit(handler);
         StarringActorCol.setOnEditCommit(handler);
+
+        ScoreCol.setCellFactory(TextFieldTableCell.<Movie, Number>forTableColumn(new NumberStringConverter()));
+        ScoreCol.setOnEditCommit(e -> {
+            Object newScore = ((TableColumn.CellEditEvent)e).getNewValue();
+            double score;
+            if(newScore.getClass().toString().equals("class java.lang.Long"))
+                score = (long)newScore * 1.0;
+            else score = (double)newScore;
+            if(score > 10)
+                return;
+            movies.get(((TableColumn.CellEditEvent)e).getTablePosition().getRow()).setScoreOutOfTen(score);
+        });//TODO fix score when > 10
 
         mainTable.setItems(movies);
         mainTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);

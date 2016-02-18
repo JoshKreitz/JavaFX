@@ -63,7 +63,10 @@
       <TextField fx:id="tfDirector" layoutX="10.0" layoutY="246.0" promptText="Director" />
       <TextField fx:id="tfStarringActor" layoutX="10.0" layoutY="258.0" promptText="Starring Actor" />
       <VBox alignment="CENTER" prefWidth="100.0">
-            <Label text="Score out of Ten" />
+          <HBox alignment="CENTER" prefWidth="100.0">
+              <Label text="Score Out Of Ten: " />
+              <Label fx:id="scoreLabel" />
+          </HBox>
             <Slider fx:id="sScore" blockIncrement="2.0" majorTickUnit="1.0" max="10.0" showTickLabels="true" showTickMarks="true" />
       </VBox>
       <HBox alignment="CENTER" prefWidth="200.0" spacing="10.0">

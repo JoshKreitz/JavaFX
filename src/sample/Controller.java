@@ -39,7 +39,7 @@ public class Controller implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         Scanner in;
         try {
-            in = new Scanner(new File(System.getProperty("user.home") + "\\Movie List.txt"));
+            in = new Scanner(new File(System.getProperty("user.home") + "/Movie List.txt"));
             in.nextLine();
             in.nextLine();
             String line;
@@ -64,7 +64,7 @@ public class Controller implements Initializable {
         Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {
                 try {
-                    BufferedWriter out = new BufferedWriter(new FileWriter(System.getProperty("user.home") + "\\Movie List.txt"));
+                    BufferedWriter out = new BufferedWriter(new FileWriter(System.getProperty("user.home") + "/Movie List.txt"));
                     out.write("This text file contains the movie listings from Movie List. Editing will not cause problems, as long as the syntax remains constant.");
                     out.newLine();
                     out.write("Note: For every empty value, there must be a \"~,\" as a placeholder!");
@@ -86,7 +86,7 @@ public class Controller implements Initializable {
             }
         });
 
-        pathLabel.setText("Editable Save File Located At " + System.getProperty("user.home") + "\\Movie List.txt");
+        pathLabel.setText("Editable Save File Located At " + System.getProperty("user.home") + "/Movie List.txt");
 
         editEnabled = new SimpleBooleanProperty(true);
         deleteEnabled = new SimpleBooleanProperty(true);

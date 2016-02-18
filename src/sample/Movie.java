@@ -69,8 +69,8 @@ public class Movie {
 
     public double getScoreOutOfTen() {
         String score = "" + scoreOutOfTen;
-        if(score.length() > 4)
-            return scoreOutOfTen = Double.parseDouble(score.substring(0, 4));
+        if(score.length() > 3)
+            return scoreOutOfTen = Double.parseDouble(score.substring(0, 3));
         else return scoreOutOfTen;
     }
 

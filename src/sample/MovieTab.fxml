@@ -34,7 +34,7 @@
                     <PropertyValueFactory property="starringActor" />
                 </cellValueFactory>
             </TableColumn>
-            <TableColumn maxWidth="300.0" minWidth="75.0" prefWidth="75.0" text="Rating /10">
+            <TableColumn fx:id="ScoreCol" maxWidth="300.0" minWidth="75.0" prefWidth="75.0" text="Rating /10">
                 <cellValueFactory>
                     <PropertyValueFactory property="scoreOutOfTen" />
                 </cellValueFactory>
