@@ -1,5 +1,8 @@
 package sample;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ObservableBooleanValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -28,38 +31,71 @@ public class Controller implements Initializable {
     public ObservableList<MovieTab> tabs = FXCollections.observableArrayList();
 
     public Button editButton, deleteButton;
+    public static BooleanProperty editEnabled, deleteEnabled;
+
+    public Label pathLabel;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        /*Scanner in;
+        Scanner in;
         try {
             in = new Scanner(new File(System.getProperty("user.home") + "\\Movie List.txt"));
-            String[] line;
-            while (in.hasNextLine()) {
-                line = in.nextLine().split(",");
-                movies.add(new Movie(line[0].replaceAll("~", ""), line[1].replaceAll("~", ""), line[2].replaceAll("~", ""), line[3].replaceAll("~", ""), line[4].replaceAll("~", ""), line[5].replaceAll("~", ""), Double.parseDouble(line[6].replaceAll("~", ""))));
+            in.nextLine();
+            in.nextLine();
+            String line;
+            String[] lineArr;
+            MovieTab newTab = null;
+            while (in.hasNextLine()){
+                if ((line = in.nextLine()).equals("##### NEW TAB #####")) {
+                    if (newTab != null)
+                        tabs.add(newTab);
+                    newTab = new MovieTab(in.nextLine());
+                } else {
+                    lineArr = line.split(",");
+                    newTab.loadMovie(new Movie(lineArr[0].replaceAll("~", ""), lineArr[1].replaceAll("~", ""), lineArr[2].replaceAll("~", ""), lineArr[3].replaceAll("~", ""), lineArr[4].replaceAll("~", ""), lineArr[5].replaceAll("~", ""), Double.parseDouble(lineArr[6].replaceAll("~", ""))));
+                }
+                //System.out.println(line);
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            tabs.add(newTab);
+        } catch (Exception e) {
+            System.out.println("cant find file or it's screwed up");
         }
-
-
 
         Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {
                 try {
                     BufferedWriter out = new BufferedWriter(new FileWriter(System.getProperty("user.home") + "\\Movie List.txt"));
-                    for (Movie mv : movies) {
-                        out.write(mv.getTitle() + "~," + mv.getGenre() + "~," + mv.getRating() + "~," + mv.getLength() + "~," + mv.getDirector() + "~," + mv.getStarringActor() + "~," + mv.getScoreOutOfTen() + "~");
+                    out.write("This text file contains the movie listings from Movie List. Editing will not cause problems, as long as the syntax remains constant.");
+                    out.newLine();
+                    out.write("Note: For every empty value, there must be a \"~,\" as a placeholder!");
+                    out.newLine();
+                    for (Tab tab : tabPane.getTabs()) {
+                        out.write("##### NEW TAB #####");
                         out.newLine();
+                        out.write(((MovieTab)tab).getTabTitle());
+                        out.newLine();
+                        for(Movie mv: ((MovieTab)tab).getMovies()) {
+                            out.write(mv.getTitle() + "~," + mv.getGenre() + "~," + mv.getRating() + "~," + mv.getLength() + "~," + mv.getDirector() + "~," + mv.getStarringActor() + "~," + mv.getScoreOutOfTen() + "~");
+                            out.newLine();
+                        }
                     }
                     out.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
-        });*/
-        tabs.add(new MovieTab("To Watch"));
+        });
+
+        pathLabel.setText("Editable Save File Located At " + System.getProperty("user.home") + "\\Movie List.txt");
+
+        editEnabled = new SimpleBooleanProperty(true);
+        deleteEnabled = new SimpleBooleanProperty(true);
+
+        editButton.disableProperty().bind(editEnabled);
+        deleteButton.disableProperty().bind(deleteEnabled);
+
+        if(tabs.size() == 0)
+            tabs.add(new MovieTab("New Tab"));
         tabPane.getTabs().setAll(tabs);
     }
 
@@ -70,6 +106,7 @@ public class Controller implements Initializable {
         popout = new Stage();
         popout.initModality(Modality.APPLICATION_MODAL);
         popout.setTitle("Add Movie");
+        popout.setResizable(false);
         popout.setOnCloseRequest(e -> MovieTab.closePopout(false));
 
         try {
@@ -94,32 +131,17 @@ public class Controller implements Initializable {
 
     public void addTab(){
         MovieTab movieTab = new MovieTab("New Tab");
-        movieTab.getMainTable().getSelectionModel().getSelectedIndices().addListener(new ListChangeListener<Integer>() {
-            private int size;
 
-            @Override
-            public void onChanged(Change<? extends Integer> change) {
-                if ((size = change.getList().size()) >= 1) {
-                    deleteButton.setDisable(false);
-                    if (size == 1)
-                        editButton.setDisable(false);
-                    else editButton.setDisable(true);
-                } else {
-                    deleteButton.setDisable(true);
-                    editButton.setDisable(true);
-                }
-            }
-        });
-
-        tabs.add(0, movieTab);
+        tabs.add(movieTab);
         tabPane.getTabs().setAll(tabs);
     }
 
-    public void delTab(){
-        if(tabs.size() > 1) {
-            tabs.remove(tabPane.getSelectionModel().getSelectedIndex());
-            tabPane.getTabs().setAll(tabs);
-        }
+    public BooleanProperty editEnabledProperty(){
+        return editEnabled;
+    }
+
+    public BooleanProperty deleteEnabledProperty(){
+        return deleteEnabled;
     }
 }
 

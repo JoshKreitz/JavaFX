@@ -18,6 +18,9 @@ public class Main extends Application {
         Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
         window.setTitle("Movie List");
 
+        window.setMinHeight(200);
+        window.setMinWidth(625);
+
         window.setScene(new Scene(root, 800, 500));
         window.show();
     }

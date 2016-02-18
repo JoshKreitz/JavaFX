@@ -4,31 +4,31 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.SelectionMode;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-
 import java.io.IOException;
 
+//Draggable Tabs? http://stackoverflow.com/questions/16437615/javafx-tab-positioning-on-mouse-drag-drop
 public class MovieTab extends Tab {
 
-    @FXML
     public TableView<Movie> mainTable = new TableView<>();
     public ObservableList<Movie> movies = FXCollections.observableArrayList();
 
-    @FXML
     public TableColumn TitleCol, GenreCol, RatingCol, LengthCol, DirectorCol, StarringActorCol;
 
-    public MovieTab(){
+    public Label titleLabel = new Label();
+    public String tabTitle = "New Tab";
+    public TextField titleTF = new TextField();
+
+    public MovieTab(String title){
+        tabTitle = title;
+
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("MovieTab.fxml"));
         fxmlLoader.setRoot(this);
         fxmlLoader.setController(this);
@@ -38,6 +38,33 @@ public class MovieTab extends Tab {
         } catch (IOException exception) {
             throw new RuntimeException(exception);
         }
+
+        titleLabel = new Label(title);
+        setGraphic(titleLabel);
+        titleLabel.setOnMouseClicked(e -> {
+            if(e.getClickCount() == 2) {
+                titleTF.setText(tabTitle);
+                setGraphic(titleTF);
+                titleTF.selectAll();
+                titleTF.requestFocus();
+            }
+        });
+        titleTF.setOnAction(e -> {
+            if(!titleTF.getText().trim().equals("")) {
+                tabTitle = titleTF.getText();
+                titleLabel.setText(tabTitle);
+            }
+            setGraphic(titleLabel);
+        });
+        titleTF.focusedProperty().addListener((arg0, oldVal, newVal) -> {
+                if(!newVal){
+                    if(!titleTF.getText().trim().equals("")) {
+                        tabTitle = titleTF.getText();
+                        titleLabel.setText(tabTitle);
+                    }
+                    setGraphic(titleLabel);
+                }
+        });
 
         EventHandler<TableColumn.CellEditEvent> handler = e -> movies.get(e.getTablePosition().getRow()).changeProptery(((PropertyValueFactory) e.getTableColumn().getCellValueFactory()).getProperty(), (String) e.getNewValue());
 
@@ -51,16 +78,29 @@ public class MovieTab extends Tab {
 
         mainTable.setItems(movies);
         mainTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
+        mainTable.getSelectionModel().getSelectedIndices().addListener(new ListChangeListener<Integer>() {
+            private int size;
+
+            @Override
+            public void onChanged(Change<? extends Integer> change) {
+                if ((size = change.getList().size()) >= 1) {
+                    Controller.deleteEnabled.setValue(false);
+                    if (size == 1)
+                        Controller.editEnabled.setValue(false);
+                    else Controller.editEnabled.setValue(true);
+                } else {
+                    Controller.editEnabled.setValue(true);
+                    Controller.deleteEnabled.setValue(true);
+                }
+            }
+        });
     }
 
-    public MovieTab(String title){
-        this();
-        setText(title);
+    public MovieTab(){
+        this("New Tab");
     }
 
-    public TableView<Movie> getMainTable(){
-        return mainTable;
-    }
 
     private static int indexOfEdittingRow = -1;
     private static boolean hangingDelete = true;
@@ -101,9 +141,8 @@ public class MovieTab extends Tab {
         Controller.popout = new Stage();
         Controller.popout.initModality(Modality.APPLICATION_MODAL);
         Controller.popout.setTitle("Add Movie");
+        Controller.popout.setResizable(false);
         Controller.popout.setOnCloseRequest(e -> closePopout(false));
-
-        System.out.println("1");
 
         try {
             Parent root = FXMLLoader.load(getClass().getResource("popout.fxml"));
@@ -119,6 +158,22 @@ public class MovieTab extends Tab {
         if (hangingDelete)
             movies.remove(toBeEditted);
         else hangingDelete = true;
+    }
+
+    public TableView<Movie> getMainTable(){
+        return mainTable;
+    }
+
+    public String getTabTitle(){
+        return tabTitle;
+    }
+
+    public ObservableList<Movie> getMovies(){
+        return movies;
+    }
+
+    public void loadMovie(Movie mv){
+        movies.add(mv);
     }
 
     public void setMainTable(TableView<Movie> mainTable) {

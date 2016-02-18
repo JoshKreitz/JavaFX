@@ -57,7 +57,6 @@ public class PopoutController implements Initializable {
             String temp;
             if((temp = cbRating.getValue()) == null)
                 temp = "";
-            System.out.println("2");
             addMovie = true;
             movieToAdd = new Movie(tfTitle.getText(), cbGenre.getValue(), temp, tfLength.getText(), tfDirector.getText(), tfStarringActor.getText(), sScore.getValue());
             MovieTab.closePopout(true);

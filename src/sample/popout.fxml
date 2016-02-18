@@ -19,7 +19,7 @@
          </font>
       </Label>
       <TextField fx:id="tfTitle" promptText="Title" />
-      <ComboBox fx:id="cbGenre" editable="true" prefWidth="235.0" promptText="Genre">
+      <ComboBox fx:id="cbGenre" editable="true" prefWidth="250.0" promptText="Genre">
           <items>
               <FXCollections fx:factory="observableArrayList">
                   <String fx:value="Action" />
@@ -45,7 +45,7 @@
               </FXCollections>
           </items>
       </ComboBox>
-      <ComboBox fx:id="cbRating" prefWidth="235.0" promptText="Rating" visibleRowCount="11">
+      <ComboBox fx:id="cbRating" prefWidth="250.0" promptText="Rating" visibleRowCount="11">
           <items>
               <FXCollections fx:factory="observableArrayList">
                   <String fx:value="R" />
