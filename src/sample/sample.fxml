@@ -3,6 +3,9 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
@@ -13,6 +16,18 @@
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="100" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
    <top>
       <VBox prefWidth="100.0" BorderPane.alignment="CENTER">
+         <MenuBar>
+             <Menu mnemonicParsing="false" text="File">
+                   <MenuItem mnemonicParsing="false" text="Random Movie To Watch" onAction="#randomMovie"/>
+                   <MenuItem mnemonicParsing="false" text="Save" onAction="#saveFile"/>
+                   <MenuItem mnemonicParsing="false" text="Import" />
+                   <MenuItem mnemonicParsing="false" text="Clear" />
+             </Menu>
+             <Menu mnemonicParsing="false" text="Help">
+                 <MenuItem mnemonicParsing="false" text="Common Problems" />
+                     <MenuItem mnemonicParsing="false" text="About" />
+             </Menu>
+         </MenuBar>
             <HBox prefWidth="200.0" spacing="10.0">
                 <Button mnemonicParsing="false" onAction="#showMoviePopout" text="Add Movie" />
                 <Button mnemonicParsing="false" onAction="#addTab" text="Add Category" />

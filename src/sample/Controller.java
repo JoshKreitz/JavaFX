@@ -9,14 +9,19 @@ import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import javax.swing.*;
 import java.io.*;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -52,9 +57,12 @@ public class Controller implements Initializable {
                     newTab = new MovieTab(in.nextLine());
                 } else {
                     lineArr = line.split(",");
-                    newTab.loadMovie(new Movie(lineArr[0].replaceAll("~", ""), lineArr[1].replaceAll("~", ""), lineArr[2].replaceAll("~", ""), lineArr[3].replaceAll("~", ""), lineArr[4].replaceAll("~", ""), lineArr[5].replaceAll("~", ""), Double.parseDouble(lineArr[6].replaceAll("~", ""))));
+                    try {
+                        newTab.loadMovie(new Movie(lineArr[0].replaceAll("~", ""), lineArr[1].replaceAll("~", ""), lineArr[2].replaceAll("~", ""), lineArr[3].replaceAll("~", ""), lineArr[4].replaceAll("~", ""), lineArr[5].replaceAll("~", ""), Double.parseDouble(lineArr[6].replaceAll("~", ""))));
+                    } catch(NullPointerException e){
+                        System.out.println("Failed on line: \"" + line + "\"");
+                    }
                 }
-                //System.out.println(line);
             }
             tabs.add(newTab);
         } catch (Exception e) {
@@ -63,26 +71,7 @@ public class Controller implements Initializable {
 
         Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {
-                try {
-                    BufferedWriter out = new BufferedWriter(new FileWriter(System.getProperty("user.home") + "/Movie List.txt"));
-                    out.write("This text file contains the movie listings from Movie List. Editing will not cause problems, as long as the syntax remains constant.");
-                    out.newLine();
-                    out.write("Note: For every empty value, there must be a \"~,\" as a placeholder!");
-                    out.newLine();
-                    for (Tab tab : tabPane.getTabs()) {
-                        out.write("##### NEW TAB #####");
-                        out.newLine();
-                        out.write(((MovieTab)tab).getTabTitle());
-                        out.newLine();
-                        for(Movie mv: ((MovieTab)tab).getMovies()) {
-                            out.write(mv.getTitle() + "~," + mv.getGenre() + "~," + mv.getRating() + "~," + mv.getLength() + "~," + mv.getDirector() + "~," + mv.getStarringActor() + "~," + mv.getScoreOutOfTen() + "~");
-                            out.newLine();
-                        }
-                    }
-                    out.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                saveFile();
             }
         });
 
@@ -142,6 +131,69 @@ public class Controller implements Initializable {
 
     public BooleanProperty deleteEnabledProperty(){
         return deleteEnabled;
+    }
+
+    public void saveFile(){
+        try {
+            BufferedWriter out = new BufferedWriter(new FileWriter(System.getProperty("user.home") + "/Movie List.txt"));
+            out.write("This text file contains the movie listings from Movie List. Editing will not cause problems, as long as the syntax remains constant.");
+            out.newLine();
+            out.write("Note: For every empty value, there must be a \"~,\" as a placeholder!");
+            out.newLine();
+            for (Tab tab : tabPane.getTabs()) {
+                out.write("##### NEW TAB #####");
+                out.newLine();
+                out.write(((MovieTab)tab).getTabTitle());
+                out.newLine();
+                for(Movie mv: ((MovieTab)tab).getMovies()) {
+                    out.write(mv.getTitle() + "~," + mv.getGenre() + "~," + mv.getRating() + "~," + mv.getLength() + "~," + mv.getDirector() + "~," + mv.getStarringActor() + "~," + mv.getScoreOutOfTen() + "~");
+                    out.newLine();
+                }
+            }
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private Stage moviePopout;
+    private Label randMovieLabel;
+
+    public void randomMovie(){
+        moviePopout = new Stage();
+        moviePopout.initModality(Modality.APPLICATION_MODAL);
+        moviePopout.setTitle("Random Movie");
+        moviePopout.setResizable(false);
+
+        VBox layout = new VBox();
+        layout.setAlignment(Pos.CENTER);
+        layout.setPadding(new Insets(8, 8, 8, 8));
+        layout.setSpacing(10);
+
+        randMovieLabel = new Label();
+        randMovieLabel.setText("Go Watch " + getRandMovie());
+        layout.getChildren().add(randMovieLabel);
+
+        HBox forButtons = new HBox();
+        forButtons.setSpacing(10);
+        forButtons.setAlignment(Pos.CENTER);
+        Button repick = new Button("That's dumb, pick another!"), okay = new Button("Okay, I'll watch that one!");
+        repick.setOnAction(e -> randMovieLabel.setText("Go Watch " + getRandMovie()));
+        okay.setOnAction(e -> moviePopout.hide());
+        forButtons.getChildren().add(repick);
+        forButtons.getChildren().add(okay);
+        layout.getChildren().add(forButtons);
+
+        Scene scene = new Scene(layout, 330, 75);
+
+        moviePopout.setScene(scene);
+        moviePopout.showAndWait();
+    }
+
+    private String getRandMovie(){
+        MovieTab randTab = tabs.get((int)(Math.random() * tabs.size()));
+        ObservableList<Movie> movies = randTab.getMovies();
+        return movies.get((int)(Math.random() * movies.size())).getTitle() + " in tab \"" + randTab.getTabTitle() + "\"";
     }
 }
 
