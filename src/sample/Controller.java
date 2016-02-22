@@ -59,7 +59,7 @@ public class Controller implements Initializable {
                     lineArr = line.split(",");
                     try {
                         newTab.loadMovie(new Movie(lineArr[0].replaceAll("~", ""), lineArr[1].replaceAll("~", ""), lineArr[2].replaceAll("~", ""), lineArr[3].replaceAll("~", ""), lineArr[4].replaceAll("~", ""), lineArr[5].replaceAll("~", ""), Double.parseDouble(lineArr[6].replaceAll("~", ""))));
-                    } catch(NullPointerException e){
+                    } catch(Exception e){
                         System.out.println("Failed on line: \"" + line + "\"");
                     }
                 }
