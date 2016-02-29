@@ -12,9 +12,8 @@ public class Main extends Application {
         launch(args);
     }
 
-
     @Override
-    public void start(Stage window) throws Exception{
+    public void start(Stage window) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
         window.setTitle("Movie List");
 
@@ -25,6 +24,4 @@ public class Main extends Application {
         window.setScene(new Scene(root, 1000, 700));
         window.show();
     }
-
-
 }

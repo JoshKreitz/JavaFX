@@ -50,7 +50,7 @@ public class Controller implements Initializable {
             String line;
             String[] lineArr;
             MovieTab newTab = null;
-            while (in.hasNextLine()){
+            while (in.hasNextLine()) {
                 if ((line = in.nextLine()).equals("##### NEW TAB #####")) {
                     if (newTab != null)
                         tabs.add(newTab);
@@ -59,7 +59,7 @@ public class Controller implements Initializable {
                     lineArr = line.split(",");
                     try {
                         newTab.loadMovie(new Movie(lineArr[0].replaceAll("~", ""), lineArr[1].replaceAll("~", ""), lineArr[2].replaceAll("~", ""), lineArr[3].replaceAll("~", ""), lineArr[4].replaceAll("~", ""), lineArr[5].replaceAll("~", ""), Double.parseDouble(lineArr[6].replaceAll("~", ""))));
-                    } catch(Exception e){
+                    } catch (Exception e) {
                         System.out.println("Failed on line: \"" + line + "\"");
                     }
                 }
@@ -83,7 +83,7 @@ public class Controller implements Initializable {
         editButton.disableProperty().bind(editEnabled);
         deleteButton.disableProperty().bind(deleteEnabled);
 
-        if(tabs.size() == 0)
+        if (tabs.size() == 0)
             tabs.add(new MovieTab("New Tab"));
         tabPane.getTabs().setAll(tabs);
     }
@@ -106,34 +106,34 @@ public class Controller implements Initializable {
             e.printStackTrace();
         }
 
-        if(PopoutController.addMovie)
-            ((MovieTab)tabPane.getSelectionModel().getSelectedItem()).addMovie(PopoutController.movieToAdd);
+        if (PopoutController.addMovie)
+            ((MovieTab) tabPane.getSelectionModel().getSelectedItem()).addMovie(PopoutController.movieToAdd);
     }
 
-    public void editSelectedItem(){
-        ((MovieTab)tabPane.getSelectionModel().getSelectedItem()).editSelectedItem();
+    public void editSelectedItem() {
+        ((MovieTab) tabPane.getSelectionModel().getSelectedItem()).editSelectedItem();
     }
 
-    public void deleteSelectedItems(){
-        ((MovieTab)tabPane.getSelectionModel().getSelectedItem()).deleteSelectedItems();
+    public void deleteSelectedItems() {
+        ((MovieTab) tabPane.getSelectionModel().getSelectedItem()).deleteSelectedItems();
     }
 
-    public void addTab(){
+    public void addTab() {
         MovieTab movieTab = new MovieTab("New Tab");
 
         tabs.add(movieTab);
         tabPane.getTabs().setAll(tabs);
     }
 
-    public BooleanProperty editEnabledProperty(){
+    public BooleanProperty editEnabledProperty() {
         return editEnabled;
     }
 
-    public BooleanProperty deleteEnabledProperty(){
+    public BooleanProperty deleteEnabledProperty() {
         return deleteEnabled;
     }
 
-    public void saveFile(){
+    public void saveFile() {
         try {
             BufferedWriter out = new BufferedWriter(new FileWriter(System.getProperty("user.home") + "/Movie List.txt"));
             out.write("This text file contains the movie listings from Movie List. Editing will not cause problems, as long as the syntax remains constant.");
@@ -143,9 +143,9 @@ public class Controller implements Initializable {
             for (Tab tab : tabPane.getTabs()) {
                 out.write("##### NEW TAB #####");
                 out.newLine();
-                out.write(((MovieTab)tab).getTabTitle());
+                out.write(((MovieTab) tab).getTabTitle());
                 out.newLine();
-                for(Movie mv: ((MovieTab)tab).getMovies()) {
+                for (Movie mv : ((MovieTab) tab).getMovies()) {
                     out.write(mv.getTitle() + "~," + mv.getGenre() + "~," + mv.getRating() + "~," + mv.getLength() + "~," + mv.getDirector() + "~," + mv.getStarringActor() + "~," + mv.getScoreOutOfTen() + "~");
                     out.newLine();
                 }
@@ -159,7 +159,7 @@ public class Controller implements Initializable {
     private Stage moviePopout;
     private Label randMovieLabel;
 
-    public void randomMovie(){
+    public void randomMovie() {
         moviePopout = new Stage();
         moviePopout.initModality(Modality.APPLICATION_MODAL);
         moviePopout.setTitle("Random Movie");
@@ -190,19 +190,19 @@ public class Controller implements Initializable {
         moviePopout.showAndWait();
     }
 
-    private String getRandMovie(){
+    private String getRandMovie() {
         ObservableList<MovieTab> usableTabs = FXCollections.observableArrayList();
-        for(MovieTab tab: tabs)
-            if(tab.getMovies().size() != 0)
+        for (MovieTab tab : tabs)
+            if (tab.getMovies().size() != 0)
                 usableTabs.add(tab);
 
-        if(usableTabs.size() == 0)
+        if (usableTabs.size() == 0)
             return "Nothing, add some movies!";
 
-        MovieTab randTab = usableTabs.get((int)(Math.random() * usableTabs.size()));
+        MovieTab randTab = usableTabs.get((int) (Math.random() * usableTabs.size()));
         ObservableList<Movie> movies = randTab.getMovies();
 
-        return movies.get((int)(Math.random() * movies.size())).getTitle() + " in tab \"" + randTab.getTabTitle() + "\"";
+        return movies.get((int) (Math.random() * movies.size())).getTitle() + " in tab \"" + randTab.getTabTitle() + "\"";
     }
 }
 
