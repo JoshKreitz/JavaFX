@@ -162,7 +162,7 @@ public class MovieTab extends Tab {
 
         try {
             Parent root = FXMLLoader.load(getClass().getResource("popout.fxml"));
-            Controller.popout.setScene(new Scene(root, 250, 340));
+            Controller.popout.setScene(new Scene(root, 300, 435));
             Controller.popout.showAndWait();
         } catch (IOException e) {
             e.printStackTrace();

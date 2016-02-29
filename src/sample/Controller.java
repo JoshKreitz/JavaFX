@@ -100,7 +100,7 @@ public class Controller implements Initializable {
 
         try {
             Parent root = FXMLLoader.load(getClass().getResource("popout.fxml"));
-            popout.setScene(new Scene(root, 250, 340));
+            popout.setScene(new Scene(root, 300, 435));
             popout.showAndWait();
         } catch (IOException e) {
             e.printStackTrace();
@@ -184,15 +184,24 @@ public class Controller implements Initializable {
         forButtons.getChildren().add(okay);
         layout.getChildren().add(forButtons);
 
-        Scene scene = new Scene(layout, 330, 75);
+        Scene scene = new Scene(layout, 500, 100);
 
         moviePopout.setScene(scene);
         moviePopout.showAndWait();
     }
 
     private String getRandMovie(){
-        MovieTab randTab = tabs.get((int)(Math.random() * tabs.size()));
+        ObservableList<MovieTab> usableTabs = FXCollections.observableArrayList();
+        for(MovieTab tab: tabs)
+            if(tab.getMovies().size() != 0)
+                usableTabs.add(tab);
+
+        if(usableTabs.size() == 0)
+            return "Nothing, add some movies!";
+
+        MovieTab randTab = usableTabs.get((int)(Math.random() * usableTabs.size()));
         ObservableList<Movie> movies = randTab.getMovies();
+
         return movies.get((int)(Math.random() * movies.size())).getTitle() + " in tab \"" + randTab.getTabTitle() + "\"";
     }
 }

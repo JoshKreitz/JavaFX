@@ -20,8 +20,9 @@ public class Main extends Application {
 
         window.setMinHeight(200);
         window.setMinWidth(625);
+        window.setMaximized(true);
 
-        window.setScene(new Scene(root, 800, 500));
+        window.setScene(new Scene(root, 1000, 700));
         window.show();
     }
 
