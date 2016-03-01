@@ -18,6 +18,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -216,6 +217,14 @@ public class Controller implements Initializable {
         ObservableList<Movie> movies = randTab.getMovies();
 
         return movies.get((int) (Math.random() * movies.size())).getTitle() + " in tab \"" + randTab.getTabTitle() + "\"";
+    }
+
+    public void importFile(){
+        Stage stage = new Stage();
+        FileChooser chooser = new FileChooser();
+        chooser.showOpenDialog(stage);
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.showAndWait();
     }
 }
 
