@@ -21,8 +21,8 @@
             <MenuBar>
                 <Menu mnemonicParsing="false" text="File">
                     <MenuItem mnemonicParsing="false" text="Random Movie To Watch" onAction="#randomMovie"/>
-                    <MenuItem mnemonicParsing="false" text="Backup Save File"/>
-                    <MenuItem mnemonicParsing="false" text="Save" onAction="#saveFile"/>
+                    <MenuItem mnemonicParsing="false" text="Backup Save File" onAction="#backupSaveFile"/>
+                    <MenuItem mnemonicParsing="false" text="Save" onAction="#saveFileBtn"/>
                     <MenuItem mnemonicParsing="false" text="Import"/>
                     <MenuItem mnemonicParsing="false" text="Clear"/>
                 </Menu>

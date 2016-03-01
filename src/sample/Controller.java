@@ -71,7 +71,7 @@ public class Controller implements Initializable {
 
         Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {
-                saveFile();
+                saveFile(false);
             }
         });
 
@@ -133,9 +133,22 @@ public class Controller implements Initializable {
         return deleteEnabled;
     }
 
-    public void saveFile() {
+    public void saveFileBtn() {
+        saveFile(false);
+    }
+
+    public void backupSaveFile() {
+        saveFile(true);
+    }
+
+    public void saveFile(boolean saveToDesktop) {
         try {
-            BufferedWriter out = new BufferedWriter(new FileWriter(System.getProperty("user.home") + "/Movie List.txt"));
+            BufferedWriter out;
+            if (saveToDesktop)
+                out = new BufferedWriter(new FileWriter(System.getProperty("user.home") + "/Desktop/Movie List.txt"));
+            else
+                out = new BufferedWriter(new FileWriter(System.getProperty("user.home") + "/Movie List.txt"));
+
             out.write("This text file contains the movie listings from Movie List. Editing will not cause problems, as long as the syntax remains constant.");
             out.newLine();
             out.write("Note: For every empty value, there must be a \"~,\" as a placeholder!");
@@ -197,7 +210,7 @@ public class Controller implements Initializable {
                 usableTabs.add(tab);
 
         if (usableTabs.size() == 0)
-            return "Nothing, add some movies!";
+            return "Nothing, Add Some Movies!";
 
         MovieTab randTab = usableTabs.get((int) (Math.random() * usableTabs.size()));
         ObservableList<Movie> movies = randTab.getMovies();
