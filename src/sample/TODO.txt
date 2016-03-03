@@ -1,0 +1,12 @@
+Still to do:
+- Before exit, prompt to save list
+- Prompt when list fails to load
+- Ability to import large lists of data
+
+Long Term:
+- IMDB lookup
+- See other people's lists?
+
+Placed On Back Burner:
+- focusLost cell editing
+- Draggable tab shifting
