@@ -3,6 +3,7 @@ package StudentOrganizer;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+//This handles the student's information
 public class Student implements Serializable {
 
     private String name;

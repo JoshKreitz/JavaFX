@@ -2,6 +2,7 @@ package StudentOrganizer;
 
 import java.io.Serializable;
 
+//This class is only used to save the students arraylist and allow it to be serialized
 public class SerializableList implements Serializable {
 
     public Student[] students;

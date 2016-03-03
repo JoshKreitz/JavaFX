@@ -2,36 +2,34 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<?import javafx.scene.control.cell.PropertyValueFactory?>
-<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-      prefHeight="400.0" prefWidth="600.0" spacing="10.0" xmlns="http://javafx.com/javafx/null"
-      xmlns:fx="http://javafx.com/fxml/1" fx:controller="StudentOrganizer.MainWindowController">
+<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" spacing="10.0" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="StudentOrganizer.MainWindowController">
     <HBox alignment="TOP_CENTER" prefWidth="200.0" spacing="10.0">
-        <TextField fx:id="tfName" promptText="Student Name" HBox.hgrow="ALWAYS" onAction="#loadStudent"/>
-        <Button mnemonicParsing="false" text="Search" onAction="#loadStudent"/>
-        <Button mnemonicParsing="false" text="Add"/>
+        <ComboBox fx:id="cbName" editable="true" maxWidth="1.7976931348623157E308" onAction="#lookupStudent" prefWidth="0.0" promptText="Student Name" HBox.hgrow="ALWAYS" />
+        <Button mnemonicParsing="false" onAction="#lookupStudent" text="Search" />
+        <Button mnemonicParsing="false" text="Add" />
     </HBox>
     <TableView fx:id="DataTable" prefWidth="200.0" VBox.vgrow="ALWAYS">
         <columns>
             <TableColumn fx:id="KeyCol" text="C1">
                 <cellValueFactory>
-                    <PropertyValueFactory property="key"/>
+                    <PropertyValueFactory property="key" />
                 </cellValueFactory>
             </TableColumn>
             <TableColumn fx:id="ValCol" text="C2">
                 <cellValueFactory>
-                    <PropertyValueFactory property="val"/>
+                    <PropertyValueFactory property="val" />
                 </cellValueFactory>
             </TableColumn>
         </columns>
     </TableView>
     <padding>
-        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
     </padding>
 </VBox>

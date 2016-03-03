@@ -6,6 +6,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+//Main runner class. Starts off the program, that's it
 public class Main extends Application {
 
     public static void main(String[] args) {
@@ -15,6 +16,7 @@ public class Main extends Application {
     @Override
     public void start(Stage window) throws Exception {
         {
+            //connects the MainWindow fxml file
             Parent root = FXMLLoader.load(getClass().getResource("MainWindow.fxml"));
             window.setTitle("Student Lookup");
 
