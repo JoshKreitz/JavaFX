@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/JavaFX Learning.iml" filepath="$PROJECT_DIR$/JavaFX Learning.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Lab Student Organizer/Lab Student Organizer.iml" filepath="$PROJECT_DIR$/Lab Student Organizer/Lab Student Organizer.iml" />
     </modules>
   </component>
 </project>
