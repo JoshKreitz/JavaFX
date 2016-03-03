@@ -14,7 +14,7 @@
       xmlns:fx="http://javafx.com/fxml/1" fx:controller="StudentOrganizer.MainWindowController">
     <HBox alignment="TOP_CENTER" prefWidth="200.0" spacing="10.0">
         <TextField fx:id="tfName" promptText="Student Name" HBox.hgrow="ALWAYS" onAction="#loadStudent"/>
-        <Button mnemonicParsing="false" text="Search"/>
+        <Button mnemonicParsing="false" text="Search" onAction="#loadStudent"/>
         <Button mnemonicParsing="false" text="Add"/>
     </HBox>
     <TableView fx:id="DataTable" prefWidth="200.0" VBox.vgrow="ALWAYS">

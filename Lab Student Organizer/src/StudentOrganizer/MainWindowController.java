@@ -6,6 +6,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.Pane;
 
 import java.io.*;
 import java.net.URL;
@@ -23,11 +24,10 @@ public class MainWindowController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         loadSaveFile(System.getProperty("user.home") + "/Desktop/testing.ser");
 
-        students.add(new Student("Johnny", "grade:A", "comment:winning"));
+        students.add(new Student("123456", "name:Johnny", "grade:A", "comment:winning", "student id:561235", "level of awesome:530"));
 
         KeyCol.prefWidthProperty().bind(DataTable.widthProperty().divide(2));
         ValCol.prefWidthProperty().bind(DataTable.widthProperty().divide(2));
-
 
         Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {
@@ -45,8 +45,8 @@ public class MainWindowController implements Initializable {
                 tfName.setPromptText("Student Name");
                 return;
             }
-        tfName.setText("");
-        tfName.setPromptText("Student Not Found!");
+        tfName.setText("Student Not Found!");
+        tfName.selectAll();
         DataTable.setItems(null);
     }
 
@@ -59,7 +59,7 @@ public class MainWindowController implements Initializable {
             fileIn.close();
         } catch (IOException e) {
             System.out.println("load file IOException");
-            e.printStackTrace();
+            //e.printStackTrace();
         } catch (ClassNotFoundException e) {
             System.out.println("load file ClassNotFoundException");
         }

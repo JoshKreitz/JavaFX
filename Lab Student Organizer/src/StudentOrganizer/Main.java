@@ -22,7 +22,7 @@ public class Main extends Application {
             //window.setMinWidth(625);
             //window.setResizable(false);
 
-            window.setScene(new Scene(root, 300, 400));
+            window.setScene(new Scene(root, 400, 500));
             window.show();
         }
     }
