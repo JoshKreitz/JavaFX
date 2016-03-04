@@ -17,7 +17,7 @@ public class Student implements Serializable {
         String[] temp;
         for (String x : studentData) {
             temp = x.split(":");
-            data.add(new Data(temp[0], temp[1]));
+            data.add(new Data(temp[0], temp[1].replaceAll("~~__123", "")));
         }
     }
 
@@ -30,6 +30,10 @@ public class Student implements Serializable {
         for (Data x : data)
             output += x + ", ";
         return output;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getName() {

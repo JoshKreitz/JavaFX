@@ -1,6 +1,8 @@
 package StudentOrganizer;
 
 import javafx.application.Application;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -13,16 +15,17 @@ public class Main extends Application {
         launch(args);
     }
 
+    //Property for the title of the main window, set from MainWindowController.java in the lookupStudent method. The title changes to display the currently viewed student
+    public static StringProperty title = new SimpleStringProperty("Student Lookup");
+
     @Override
     public void start(Stage window) throws Exception {
         {
             //connects the MainWindow fxml file
             Parent root = FXMLLoader.load(getClass().getResource("MainWindow.fxml"));
-            window.setTitle("Student Lookup");
+            window.titleProperty().bind(title);
 
             window.setMinHeight(250);
-            //window.setMinWidth(625);
-            //window.setResizable(false);
 
             window.setScene(new Scene(root, 400, 500));
             window.show();

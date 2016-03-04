@@ -1,7 +1,5 @@
 package StudentOrganizer;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.Initializable;
@@ -24,8 +22,10 @@ public class MainWindowController implements Initializable {
     public TableColumn KeyCol, ValCol;
     public ComboBox<String> cbName;
 
-    //A list of all the students loaded from the save file
-    public ObservableList<Student> students = FXCollections.observableArrayList();
+    //A list of all the students loaded from the save file or added manually
+    private ObservableList<Student> students = FXCollections.observableArrayList();
+    //A Set of all the names of the students, used for the comboBox items
+    private Set<String> studentNames = new TreeSet<>();
 
     //called only once, when window is created
     @Override
@@ -39,7 +39,7 @@ public class MainWindowController implements Initializable {
             }
         });
 
-        students.add(new Student("123456", "name:Johnny", "grade:A", "comment:winning", "student id:561235", "level of awesome:530", "identifier:" + students.toString().length()));
+        //students.add(new Student("123456", "name:Johnny", "grade:A", "comment:winning", "student id:561235", "level of awesome:530"));
 
         //Sets the width of the columns to be half of the TableView's width
         KeyCol.prefWidthProperty().bind(DataTable.widthProperty().subtract(2).divide(2));
@@ -63,27 +63,20 @@ public class MainWindowController implements Initializable {
         });
 
         //set the items on the combobox to be all of the different available students
-        Set<String> studentNames = new TreeSet<>();
-        students.forEach(e -> {
-            String tempName = ((Student) e).getName();
-            if (studentNames.contains(tempName)) {
-                int copyNumber = 1;
-                while (studentNames.contains(tempName + " (" + copyNumber + ")"))
-                    copyNumber++;
-                studentNames.add(tempName + " (" + copyNumber + ")");
-            } else
-                studentNames.add(((Student) e).getName());
-        });
+        students.forEach(e -> studentNames.add(e.getName()));
         cbName.setItems(FXCollections.observableArrayList(studentNames));
     }
 
     //finds the student with the name typed into the combobox
     public void lookupStudent() {
-        String name = cbName.getValue();
+        String name = cbName.getEditor().getText();
+
         if (name.equals(""))
             return;
 
+        //shifts focus to the data table, and sets window title to show who's being looked at
         DataTable.requestFocus();
+        Main.title.setValue("Student Lookup - " + name);
 
         for (Student stud : students)
             //worth noting that this is an overriden equals method, not comparing memory addresses
@@ -93,7 +86,7 @@ public class MainWindowController implements Initializable {
                 return;
             }
 
-        cbName.setValue("Student Not Found!");
+        //cbName.setValue("Student Not Found!");
         DataTable.setItems(null);
     }
 
@@ -124,6 +117,27 @@ public class MainWindowController implements Initializable {
             out.close();
             fileOut.close();
         } catch (IOException e) {
+        }
+    }
+
+    //Creates the popout, retrieves the final product, and adds it to the combobox items as well as the overall student list
+    public void addStudent() {
+        PopoutController pc = new PopoutController();
+        pc.show();
+
+        Student tempStud;
+        if ((tempStud = pc.getFinalStudent()) != null) {
+            String tempName = tempStud.getName();
+            if (studentNames.contains(tempName)) {
+                int copyNumber = 1;
+                while (studentNames.contains(tempName + " (" + copyNumber + ")"))
+                    copyNumber++;
+                tempName = tempName + " (" + copyNumber + ")";
+            }
+            studentNames.add(tempName);
+            tempStud.setName(tempName);
+            students.add(tempStud);
+            cbName.setItems(FXCollections.observableArrayList(studentNames));
         }
     }
 }
