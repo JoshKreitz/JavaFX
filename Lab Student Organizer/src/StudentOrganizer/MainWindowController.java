@@ -1,6 +1,7 @@
 package StudentOrganizer;
 
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -21,11 +22,14 @@ public class MainWindowController implements Initializable {
     public TableView DataTable;
     public TableColumn KeyCol, ValCol;
     public ComboBox<String> cbName;
+    public Button btnEdit;
 
     //A list of all the students loaded from the save file or added manually
     private ObservableList<Student> students = FXCollections.observableArrayList();
     //A Set of all the names of the students, used for the comboBox items
     private Set<String> studentNames = new TreeSet<>();
+
+    private int selectedStudentIndex = -1;
 
     //called only once, when window is created
     @Override
@@ -63,7 +67,8 @@ public class MainWindowController implements Initializable {
         });
 
         //set the items on the combobox to be all of the different available students
-        students.forEach(e -> studentNames.add(e.getName()));
+        if(students.size() != 0)
+            students.forEach(e -> studentNames.add(e.getName()));
         cbName.setItems(FXCollections.observableArrayList(studentNames));
     }
 
@@ -78,16 +83,19 @@ public class MainWindowController implements Initializable {
         DataTable.requestFocus();
         Main.title.setValue("Student Lookup - " + name);
 
-        for (Student stud : students)
+        for (int i = 0; i < students.size(); i++)
             //worth noting that this is an overriden equals method, not comparing memory addresses
-            if (stud.equals(name)) {
-                DataTable.setItems(FXCollections.observableArrayList(stud.getData()));
+            if (students.get(i).equals(name)) {
+                DataTable.setItems(FXCollections.observableArrayList(students.get(i).getData()));
                 cbName.setPromptText("Student Name");
+                btnEdit.setDisable(false);
+                selectedStudentIndex = i;
                 return;
             }
 
         //cbName.setValue("Student Not Found!");
         DataTable.setItems(null);
+        btnEdit.setDisable(true);
     }
 
     //loads the file via Serialization. Too complex for me to explain, look it up, it's awesome. Pretty much saving objects directly
@@ -104,7 +112,7 @@ public class MainWindowController implements Initializable {
         } catch (ClassNotFoundException e) {
             System.out.println("load file ClassNotFoundException");
         }
-        //System.out.println("load: " + students);
+        System.out.println("load: " + students);
     }
 
     //saves the students
@@ -139,5 +147,13 @@ public class MainWindowController implements Initializable {
             students.add(tempStud);
             cbName.setItems(FXCollections.observableArrayList(studentNames));
         }
+    }
+
+    public void editStudent() {
+        System.out.println("hit edit with " + students.get(selectedStudentIndex));
+        PopoutController pc = new PopoutController(students.get(selectedStudentIndex));
+        pc.show();
+
+        students.set(selectedStudentIndex, pc.getFinalStudent());
     }
 }

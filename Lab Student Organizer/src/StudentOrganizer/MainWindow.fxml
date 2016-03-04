@@ -16,7 +16,8 @@
         <ComboBox fx:id="cbName" editable="true" maxWidth="1.7976931348623157E308" onAction="#lookupStudent"
                   prefWidth="0.0" promptText="Student Name" HBox.hgrow="ALWAYS"/>
         <Button mnemonicParsing="false" onAction="#lookupStudent" text="Search"/>
-        <Button mnemonicParsing="false" text="Add" onAction="#addStudent"/>
+        <Button mnemonicParsing="false" onAction="#addStudent" text="Add"/>
+        <Button fx:id="btnEdit" disable="true" mnemonicParsing="false" text="Edit" onAction="#editStudent"/>
     </HBox>
     <TableView fx:id="DataTable" prefWidth="200.0" VBox.vgrow="ALWAYS">
         <columns>

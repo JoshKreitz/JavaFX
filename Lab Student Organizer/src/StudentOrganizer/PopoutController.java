@@ -1,5 +1,9 @@
 package StudentOrganizer;
 
+import com.sun.javafx.scene.control.skin.BehaviorSkinBase;
+import com.sun.org.apache.bcel.internal.generic.POP;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
@@ -29,8 +33,21 @@ public class PopoutController implements Initializable {
     public VBox spContent;
     public TextField tfID;
 
+    private StringProperty tfIDText = new SimpleStringProperty();
+
     //final product. Only not null when the user clicks confirm
     private static Student finalStudent;
+
+    public PopoutController(){
+        super();
+    }
+
+    public PopoutController(Student stud) {
+        System.out.println(tfID);
+        tfIDText.set(stud.getName());
+        for(Data tag: stud.getData())
+            spContent.getChildren().add(new KeyValBox(tag.getKey(), tag.getVal()));
+    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -40,6 +57,8 @@ public class PopoutController implements Initializable {
         scrollPane.setStyle("-fx-background-color:transparent;");
         spContent.setSpacing(8);
         spContent.setAlignment(Pos.TOP_CENTER);
+
+        tfID.textProperty().bind(tfIDText);
 
         //starts off with three tag areas, more can be added
         spContent.getChildren().addAll(new KeyValBox(), new KeyValBox(), new KeyValBox());
@@ -89,7 +108,7 @@ public class PopoutController implements Initializable {
 
         try {
             Parent root = FXMLLoader.load(getClass().getResource("Popout.fxml"));
-            popout.setScene(new Scene(root, 400, 500));
+            popout.setScene(new Scene(root, 410, 500));
 
             //hijacks main thread, completely stopping code in main window. This means that once this popout closes, the thread will return to where show() was called,
             //in this case addStudent() method in MainWindowController.java.
@@ -119,6 +138,13 @@ public class PopoutController implements Initializable {
 
             getChildren().addAll(tfKey, colonLbl, tfVal);
             setSpacing(5);
+        }
+
+        public KeyValBox(String key, String val){
+            this();
+
+            tfKey.setText(key);
+            tfVal.setText(val);
         }
 
         public String getKey() {
