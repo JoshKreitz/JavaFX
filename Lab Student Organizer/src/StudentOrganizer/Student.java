@@ -9,6 +9,7 @@ public class Student implements Serializable {
     private String name;
     private ArrayList<Data> data;
 
+    //instatiates the student. First variable is the name/identifier, and the strings coming after it are the data in "key:val" format
     public Student(String name, String... studentData) {
         this.name = name;
         data = new ArrayList<>();

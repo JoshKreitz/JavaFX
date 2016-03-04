@@ -11,6 +11,8 @@ import javafx.scene.layout.Pane;
 import java.io.*;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.TreeSet;
 
 //Controller file for MainWindow.fxml. This handles all of the different actions, different properties of the components,
 //as well as the loading/saving serialization. Implementing Initializable allows the method initialize to be called
@@ -37,7 +39,7 @@ public class MainWindowController implements Initializable {
             }
         });
 
-        students.add(new Student("123456", "name:Johnny", "grade:A", "comment:winning", "student id:561235", "level of awesome:530"));
+        students.add(new Student("123456", "name:Johnny", "grade:A", "comment:winning", "student id:561235", "level of awesome:530", "identifier:" + students.toString().length()));
 
         //Sets the width of the columns to be half of the TableView's width
         KeyCol.prefWidthProperty().bind(DataTable.widthProperty().subtract(2).divide(2));
@@ -59,6 +61,20 @@ public class MainWindowController implements Initializable {
             if (newVal)
                 cbName.setValue("");
         });
+
+        //set the items on the combobox to be all of the different available students
+        Set<String> studentNames = new TreeSet<>();
+        students.forEach(e -> {
+            String tempName = ((Student) e).getName();
+            if (studentNames.contains(tempName)) {
+                int copyNumber = 1;
+                while (studentNames.contains(tempName + " (" + copyNumber + ")"))
+                    copyNumber++;
+                studentNames.add(tempName + " (" + copyNumber + ")");
+            } else
+                studentNames.add(((Student) e).getName());
+        });
+        cbName.setItems(FXCollections.observableArrayList(studentNames));
     }
 
     //finds the student with the name typed into the combobox
@@ -66,6 +82,8 @@ public class MainWindowController implements Initializable {
         String name = cbName.getValue();
         if (name.equals(""))
             return;
+
+        DataTable.requestFocus();
 
         for (Student stud : students)
             //worth noting that this is an overriden equals method, not comparing memory addresses

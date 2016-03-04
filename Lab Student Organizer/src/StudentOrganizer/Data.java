@@ -2,6 +2,8 @@ package StudentOrganizer;
 
 import java.io.Serializable;
 
+//this class holds one element of data for the student class. This is required instead of using a map because of how
+//javafx TableColumns read in values
 public class Data implements Serializable{
 
     private String key, val;
