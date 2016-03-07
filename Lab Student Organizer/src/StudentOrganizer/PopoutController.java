@@ -33,32 +33,24 @@ public class PopoutController implements Initializable {
     public VBox spContent;
     public TextField tfID;
 
-    private StringProperty tfIDText = new SimpleStringProperty();
-
     //final product. Only not null when the user clicks confirm
-    private static Student finalStudent;
-
-    public PopoutController(){
-        super();
-    }
-
-    public PopoutController(Student stud) {
-        System.out.println(tfID);
-        tfIDText.set(stud.getName());
-        for(Data tag: stud.getData())
-            spContent.getChildren().add(new KeyValBox(tag.getKey(), tag.getVal()));
-    }
+    private static Student finalStudent, preloadStudent;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         //sets up the scroll pane and it's content layout
+        //System.out.println("instantiated")
         spContent = new VBox();
         scrollPane.setContent(spContent);
         scrollPane.setStyle("-fx-background-color:transparent;");
         spContent.setSpacing(8);
         spContent.setAlignment(Pos.TOP_CENTER);
 
-        tfID.textProperty().bind(tfIDText);
+        if(preloadStudent != null){
+            tfID.setText(preloadStudent.getName());
+            for(Data tag: preloadStudent.getData())
+                spContent.getChildren().add(new KeyValBox(tag.getKey(), tag.getVal()));
+        }
 
         //starts off with three tag areas, more can be added
         spContent.getChildren().addAll(new KeyValBox(), new KeyValBox(), new KeyValBox());
@@ -117,6 +109,11 @@ public class PopoutController implements Initializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    //sets the preload student to populate the prompt when the popout is shown. Nothing is filled if this isn't called
+    public void preloadStudent(Student stud){
+        preloadStudent = stud;
     }
 
     //custom layout for the two text boxes seperated by the colon. This saves having to individually create a bunch of these over and over, packaging everything

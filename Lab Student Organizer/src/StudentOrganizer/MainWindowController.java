@@ -67,8 +67,11 @@ public class MainWindowController implements Initializable {
         });
 
         //set the items on the combobox to be all of the different available students
-        if(students.size() != 0)
-            students.forEach(e -> studentNames.add(e.getName()));
+        for (Student stud : students)
+            if (stud == null)
+                students.remove(stud);
+            else
+                studentNames.add(stud.getName());
         cbName.setItems(FXCollections.observableArrayList(studentNames));
     }
 
@@ -112,12 +115,12 @@ public class MainWindowController implements Initializable {
         } catch (ClassNotFoundException e) {
             System.out.println("load file ClassNotFoundException");
         }
-        System.out.println("load: " + students);
+        //System.out.println("load: " + students);
     }
 
     //saves the students
     private void saveFile(String path) {
-        //System.out.println("save: " + students);
+        //System.out.println("saved: " + students + "\nArray: " + students.toArray());
         try {
             FileOutputStream fileOut = new FileOutputStream(path);
             ObjectOutputStream out = new ObjectOutputStream(fileOut);
@@ -150,10 +153,16 @@ public class MainWindowController implements Initializable {
     }
 
     public void editStudent() {
-        System.out.println("hit edit with " + students.get(selectedStudentIndex));
-        PopoutController pc = new PopoutController(students.get(selectedStudentIndex));
+        //System.out.println("hit edit with " + students.get(selectedStudentIndex));
+        PopoutController pc = new PopoutController();
+        pc.preloadStudent(students.get(selectedStudentIndex));
         pc.show();
 
+        studentNames.remove(students.get(selectedStudentIndex).getName());
+        studentNames.add(pc.getFinalStudent().getName());
+        cbName.setItems(FXCollections.observableArrayList(studentNames));
         students.set(selectedStudentIndex, pc.getFinalStudent());
+        cbName.getEditor().setText(pc.getFinalStudent().getName());
+        lookupStudent();
     }
 }
