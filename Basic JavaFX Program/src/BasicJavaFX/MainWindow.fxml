@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This tells the computer what version of xml to use, and what characters to expect the code in -->
+
+<!-- These are normal imports just like regular java code -->
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<!--
+    This gets into the heart of the FXML code. Similar to HTML or XML, this works by "tags". The first word following the "<"
+    determines what type of component it is, similar to instantiating Java objects. Following that comes the tags. These define
+    different characteristics of the component and make it work differently. Most of these are pretty self-explanatory, however
+    a few important ones are defined below:
+
+    fx:controller="BasicJavaFX.MainWindowController"    This tag is only for the outermost container (in this example it's the
+                            outer VBox) and specifies the controlling class for this FXML file. Technically not required, but
+                            needed if you want to execute code on button presses or "bind" different components. This must be
+                            the exact name of the controller class.
+
+    fx:id="TestComponent"   This tag specifies the ID of the component so that it may be accessed through Java code. It is only
+                            required if you wish to "bind" an FXML component to a Java variable. See MainWindowController.java
+                            for more information.
+
+    onAction="#exampleMethod"   This specifies the action of a component (i.e. Button or TextField). The '#' indicates a reference
+                            to the controller class, indicating the method to be called when, for example, the button is pressed.
+                            Also, notice you cannot pass a variable to the method. It must take in zero elements and return void.
+
+    maxHeight/maxWidth vs prefHeight/prefWidth  The difference between these two is simple: max/min represents the absolute limits
+                            of the component size, whereas pref represents the preferred system size that the component will start
+                            with and attempt to maintain. If no prefWidth or prefHeight is specified, the computer calculates it's
+                            own based on specific requirements of the component. For instance, no prefWidth is specified for the
+                            labels so JavaFX automatically sets it to the length of the text it contains.
+ -->
+<VBox fx:id="MainVBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+      prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="BasicJavaFX.MainWindowController">
+    <Label text="Label 1: These components are in the most basic &quot;VBox&quot;, or Vertical Box."/>
+    <Label text="Label 2: Components are arranged vertically based on order of adding"/>
+    <Button text="Button added via fxml"/>
+    <HBox fx:id="RandHBox" prefWidth="200.0">
+        <Label text="This is an &quot;HBox&quot; or horizontal box. Use this to place components side by side"/>
+        <Button text="btn1"/>
+        <Button text="btn2"/>
+        <Button text="btn3"/>
+    </HBox>
+    <Button text="The 'Spacing' of a container alters how far apart the components are. Click to set spacing to 10 pixels"
+            onAction="#setSpacingToTen"/>
+    <Button text="The 'Padding' of a container alters how far the components inside are from the edge. Click to set margins to 10 on all sides."
+            onAction="#setMarginsToTen"/>
+</VBox>

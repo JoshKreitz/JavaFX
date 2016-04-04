@@ -10,39 +10,24 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-      prefHeight="400.0" prefWidth="600.0" spacing="10.0" xmlns="http://javafx.com/javafx/null"
-      xmlns:fx="http://javafx.com/fxml/1" fx:controller="DMV.MainWindowController">
+<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" spacing="10.0" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="DMV.MainWindowController">
     <HBox prefWidth="200.0" spacing="10.0">
-        <TextField fx:id="tfEntryField" promptText="[time] [L/R] [$/C] [name]"/>
-        <Button mnemonicParsing="false" text="Begin" onAction="#start"/>
+        <TextField fx:id="tfEntryField" promptText="[time] [L/R] [$/C] [name]" />
+        <Button mnemonicParsing="false" onAction="#start" text="Begin" />
         <Label fx:id="lblEntryTime" text="Entry Time: 00:00">
-            <font>
-                <Font size="15.0"/>
-            </font>
-        </Label>
-        <Label fx:id="lblExitTime" text="Exit Time: 00:00">
-            <font>
-                <Font size="15.0"/>
-            </font>
-        </Label>
-        <Label fx:id="lblElapsedTime" text="Elapsed Time: 00">
-            <font>
-                <Font size="15.0"/>
-            </font>
-        </Label>
-        <Region HBox.hgrow="ALWAYS"/>
-        <Label text="Time: ">
-            <font>
-                <Font size="15.0"/>
-            </font>
-        </Label>
-        <Button mnemonicParsing="false" onAction="#oneXTime" text="1x"/>
-        <Button mnemonicParsing="false" onAction="#twoXTime" text="2x"/>
-        <Button mnemonicParsing="false" onAction="#tenXTime" text="10x"/>
+         <font>
+            <Font size="18.0" />
+         </font></Label>
+        <Label fx:id="lblExitTime" font="${lblEntryTime.font}" text="Exit Time: 00:00" />
+        <Label fx:id="lblElapsedTime" font="${lblEntryTime.font}" text="Elapsed Time: 00" />
+        <Region HBox.hgrow="ALWAYS" />
+        <Label font="${lblEntryTime.font}" text="Time: " />
+        <Button mnemonicParsing="false" onAction="#oneXTime" text="1x" />
+        <Button mnemonicParsing="false" onAction="#twoXTime" text="2x" />
+        <Button mnemonicParsing="false" onAction="#tenXTime" text="10x" />
     </HBox>
-    <Canvas fx:id="canvas" height="550.0" width="780.0" VBox.vgrow="ALWAYS"/>
+    <Canvas fx:id="canvas" height="550.0" width="780.0" VBox.vgrow="ALWAYS" />
     <padding>
-        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
     </padding>
 </VBox>

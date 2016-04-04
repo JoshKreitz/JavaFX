@@ -234,7 +234,7 @@ public class GraphicsProcessor {
     //removes the old character from the graphic by drawing a blank rectangle over it
     private void clearOldCharacter(GraphicsContext g) {
         g.setFill(Color.WHITE);
-        g.fillRect(oldCharacter[0], oldCharacter[1] - 15, character.getWidth(), character.getHeight() + 15);
+        g.fillRect(oldCharacter[0], oldCharacter[1] - 20, character.getWidth(), character.getHeight() + 20);
         g.setFill(Color.BLACK);
     }
 
@@ -279,7 +279,7 @@ public class GraphicsProcessor {
                 g.fillText(error, 10, 20);
                 Thread.sleep(sleepAmount);
                 g.setFill(Color.WHITE);
-                g.fillRect(0, 0, 250, 25);
+                g.fillRect(0, 0, 350, 25);
             }
         };
         thread.start();

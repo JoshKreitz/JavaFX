@@ -1,4 +1,4 @@
-package DMV;
+package BasicJavaFX;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
