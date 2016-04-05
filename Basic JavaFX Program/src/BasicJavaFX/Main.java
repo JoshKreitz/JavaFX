@@ -13,6 +13,10 @@ public class Main extends Application {
         launch(args);
     }
 
+    /*
+        In JavaFX, the "Stage" refers to the entire application window, while "Scene" refers to the specific content
+        on the window. This start method begins the program, creating the Scene and showing it on the stage.
+     */
     @Override
     public void start(Stage window) throws Exception {
         {
@@ -23,7 +27,6 @@ public class Main extends Application {
             //stops the user from resizing the window, I didn't want to deal with image resizing for this project
             window.setResizable(false);
 
-            //window.setScene(new Scene(root, 800, 600));
             window.setScene(new Scene(root, 1000, 600));
             window.show();
         }
