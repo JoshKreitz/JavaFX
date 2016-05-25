@@ -4,9 +4,11 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Basic JavaFX Program/Basic JavaFX Program.iml" filepath="$PROJECT_DIR$/Basic JavaFX Program/Basic JavaFX Program.iml" />
       <module fileurl="file://$PROJECT_DIR$/DMV Lab/DMV Lab.iml" filepath="$PROJECT_DIR$/DMV Lab/DMV Lab.iml" />
-      <module fileurl="file://$PROJECT_DIR$/JavaFX Learning.iml" filepath="$PROJECT_DIR$/JavaFX Learning.iml" />
+      <module fileurl="file://$PROJECT_DIR$/JavaFX.iml" filepath="$PROJECT_DIR$/JavaFX.iml" />
       <module fileurl="file://$PROJECT_DIR$/Lab Student Organizer/Lab Student Organizer.iml" filepath="$PROJECT_DIR$/Lab Student Organizer/Lab Student Organizer.iml" />
       <module fileurl="file://$PROJECT_DIR$/MovieList/MovieList.iml" filepath="$PROJECT_DIR$/MovieList/MovieList.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Physics Engine/Physics Engine.iml" filepath="$PROJECT_DIR$/Physics Engine/Physics Engine.iml" />
+      <module fileurl="file://$PROJECT_DIR$/T2FinalExam/T2FinalExam.iml" filepath="$PROJECT_DIR$/T2FinalExam/T2FinalExam.iml" />
       <module fileurl="file://$PROJECT_DIR$/Timer V3/Timer V3.iml" filepath="$PROJECT_DIR$/Timer V3/Timer V3.iml" />
     </modules>
   </component>
