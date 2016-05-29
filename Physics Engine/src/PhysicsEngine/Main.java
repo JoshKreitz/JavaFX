@@ -6,6 +6,9 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.io.File;
+import java.util.Scanner;
+
 //Main runner class. Starts off the program, that's it
 public class Main extends Application {
 
