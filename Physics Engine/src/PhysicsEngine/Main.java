@@ -6,6 +6,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import sun.awt.WindowClosingListener;
+
+import java.awt.event.WindowEvent;
 
 //Main runner class. Starts off the program, that's it
 public class Main extends Application {
@@ -28,6 +31,12 @@ public class Main extends Application {
             //connects the MainWindow fxml file
             Parent root = FXMLLoader.load(getClass().getResource("MainWindow.fxml"));
             window.setTitle("Physics Engine");
+
+            //stops all of the threads before the program exits, which prevents the java process from continuing to run
+            window.setOnCloseRequest(e -> {
+                MainWindowController.stopMainThread();
+                MainWindowController.stopMouseTracker();
+            });
 
             window.setScene(new Scene(root, 1000, 600));
             window.show();

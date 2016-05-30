@@ -27,7 +27,7 @@ public class MainWindowController implements Initializable {
     private final double BALL_STARTING_Y_VELOCITY = 0;
 
     //the "gravity" of the ball -- how fast it falls to the bottom
-    private final double GRAVITY_ACCELERATION = 15;
+    private final double GRAVITY_ACCELERATION = 37.039;
 
     //how quickly the different threads refresh. Beware hardware dependencies
     private final double MAIN_THREAD_REFRESH_DELAY = 10;
@@ -122,15 +122,20 @@ public class MainWindowController implements Initializable {
     }
 
     //controls whether or not the main thread runs
-    private boolean runMainThread;
+    private static boolean runMainThread;
     //determines if the ball is resting on the bottom of the screen. If two revolutions of main thread remain in same y position, it is
     private boolean yStopped1, yStopped2;
 
     //THE MAIN THREAD -- Controls all of the physics and movement of the ball
+    //this indirect starting method only needed because resetting x velocity should NOT reset timeFalling, everything else should
     private void startMainThread() {
+        timeFalling = 0;
+        beginMainThread();
+    }
+
+    private void beginMainThread() {
         runMainThread = true;
         yStopped1 = yStopped2 = false;
-        timeFalling = 0;
 
         Thread mainThread = new Thread() {
             public void run() {
@@ -170,7 +175,8 @@ public class MainWindowController implements Initializable {
 
                         //GRAVITY
                         ball.setyVelocity(ball.getyVelocity() + ((GRAVITY_ACCELERATION * (timeFalling)) / 1000));
-                    }
+                    } else if (ball.getxVelocity() == 0)
+                        stopMainThread();
 
                     g.drawImage(ball.getImg(), ball.getX(), ball.getY());
 
@@ -188,12 +194,12 @@ public class MainWindowController implements Initializable {
     }
 
     //stops the main thread
-    private void stopMainThread() {
+    public static void stopMainThread() {
         runMainThread = false;
     }
 
     //records the current and past position of the mouse, this can be used to calculate velocity
-    private boolean runMouseTracker = false;
+    private static boolean runMouseTracker = false;
     private double mouseLastX, mouseLastY;
     private double mouseThisX, mouseThisY;
 
@@ -220,7 +226,7 @@ public class MainWindowController implements Initializable {
         mouseTracker.start();
     }
 
-    private void stopMouseTracker() {
+    public static void stopMouseTracker() {
         runMouseTracker = false;
     }
 
@@ -244,20 +250,27 @@ public class MainWindowController implements Initializable {
     //sets the x velocity of the ball
     public void setXVelocity() {
         try {
+            System.out.print("Before: " + ball.getyVelocity() + "   After: ");
+            stopMainThread();
+            Thread.sleep((int) MAIN_THREAD_REFRESH_DELAY);
             ball.setxVelocity(Integer.parseInt(xVelTextBox.getText()));
+            beginMainThread();
+            System.out.println(ball.getyVelocity());
         } catch (NumberFormatException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         xVelTextBox.setText("");
     }
 
     //sets the y velocity of the ball
-    public void setyVelocity() {
+    public void setYVelocity() {
         try {
             stopMainThread();
             Thread.sleep((int) MAIN_THREAD_REFRESH_DELAY);
             ball.setyVelocity(Integer.parseInt(yVelTextBox.getText()));
             startMainThread();
+        } catch (NumberFormatException e) {
         } catch (Exception e) {
             e.printStackTrace();
         }
