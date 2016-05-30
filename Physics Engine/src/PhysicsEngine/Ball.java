@@ -3,12 +3,20 @@ package PhysicsEngine;
 import javafx.geometry.BoundingBox;
 import javafx.scene.image.Image;
 
+//This class holds the different values and attributes of the ball at any given moment
 public class Ball {
 
+    //the x and y position of the top left corner of the image
     private double x, y;
+
+    //the velocity of the ball measured in px/sec
     private double xVelocity, yVelocity;
+
+    //the image of the ball
     private Image img;
-    public BoundingBox bounds;
+
+    //the bounds of the ball
+    private BoundingBox bounds;
 
     public Ball(Image img) {
         this.img = img;
@@ -37,10 +45,6 @@ public class Ball {
         return x;
     }
 
-    public double getMaxX() {
-        return bounds.getMaxX();
-    }
-
     public void setX(double x) {
         this.x = x;
         bounds = new BoundingBox(x, y, img.getWidth(), img.getHeight());
@@ -48,10 +52,6 @@ public class Ball {
 
     public double getY() {
         return y;
-    }
-
-    public double getMaxY() {
-        return bounds.getMaxY();
     }
 
     public void setY(double y) {
@@ -94,9 +94,5 @@ public class Ball {
 
     public boolean inside(double x, double y) {
         return bounds.contains(x, y);
-    }
-
-    public BoundingBox getBounds() {
-        return bounds;
     }
 }
