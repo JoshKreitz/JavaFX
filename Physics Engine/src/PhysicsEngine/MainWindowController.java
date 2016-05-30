@@ -19,7 +19,7 @@ public class MainWindowController implements Initializable {
 //THESE VALUES MADE TO BE EDITTED
 
     //the starting coordinates of the ball
-    private final double BALL_STARTING_X = 100;
+    private final double BALL_STARTING_X = 425;
     private final double BALL_STARTING_Y = 100;
 
     //the starting velocity of the ball
