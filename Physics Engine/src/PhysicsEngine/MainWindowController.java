@@ -2,9 +2,6 @@ package PhysicsEngine;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.event.EventType;
 import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -12,8 +9,6 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
-import javafx.scene.paint.Color;
-import javafx.stage.*;
 
 import java.awt.*;
 import java.awt.event.WindowEvent;
@@ -85,7 +80,8 @@ public class MainWindowController implements Initializable {
                 stopMainThread();
                 try {
                     Thread.sleep((int) MAIN_THREAD_REFRESH_DELAY);
-                } catch (InterruptedException e1) {
+                }
+                catch (InterruptedException e1) {
                     e1.printStackTrace();
                 }
                 startMainThread();
@@ -233,7 +229,8 @@ public class MainWindowController implements Initializable {
 
                     try {
                         Thread.sleep((int) MAIN_THREAD_REFRESH_DELAY);
-                    } catch (InterruptedException e) {
+                    }
+                    catch (InterruptedException e) {
                         e.printStackTrace();
                     }
 
@@ -245,7 +242,7 @@ public class MainWindowController implements Initializable {
     }
 
     //stops the main thread
-    public static void stopMainThread() {
+    static void stopMainThread() {
         runMainThread = false;
     }
 
@@ -268,7 +265,8 @@ public class MainWindowController implements Initializable {
 
                     try {
                         Thread.sleep((int) MOUSE_TRACKER_REFRESH_DELAY);
-                    } catch (InterruptedException e) {
+                    }
+                    catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                 }
@@ -277,7 +275,7 @@ public class MainWindowController implements Initializable {
         mouseTracker.start();
     }
 
-    public static void stopMouseTracker() {
+    static void stopMouseTracker() {
         runMouseTracker = false;
     }
 
@@ -305,8 +303,8 @@ public class MainWindowController implements Initializable {
             Thread.sleep((int) MAIN_THREAD_REFRESH_DELAY);
             ball.setxVelocity(Integer.parseInt(xVelTextBox.getText()));
             beginMainThread();
-        } catch (NumberFormatException e) {
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
         xVelTextBox.setText("");
@@ -319,8 +317,8 @@ public class MainWindowController implements Initializable {
             Thread.sleep((int) MAIN_THREAD_REFRESH_DELAY);
             ball.setyVelocity(Integer.parseInt(yVelTextBox.getText()));
             startMainThread();
-        } catch (NumberFormatException e) {
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
         yVelTextBox.setText("");
