@@ -1,14 +1,22 @@
 package PhysicsEngine;
 
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.EventType;
 import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
+import javafx.stage.*;
 
 import java.awt.*;
+import java.awt.event.WindowEvent;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -27,7 +35,10 @@ public class MainWindowController implements Initializable {
     private final double BALL_STARTING_Y_VELOCITY = 0;
 
     //the "gravity" of the ball -- how fast it falls to the bottom
-    private final double GRAVITY_ACCELERATION = 37.039;
+    private DoubleProperty GRAVITY_ACCELERATION = new SimpleDoubleProperty(37.039);
+
+    //the "friction" as the ball rolls across the bottom of the screen
+    private DoubleProperty FRICTION_DECELERATION = new SimpleDoubleProperty(5);
 
     //how quickly the different threads refresh. Beware hardware dependencies
     private final double MAIN_THREAD_REFRESH_DELAY = 10;
@@ -47,6 +58,8 @@ public class MainWindowController implements Initializable {
     public HBox toolbar;
     public TextField xVelTextBox;
     public TextField yVelTextBox;
+    public Slider gravitySlider;
+    public Slider frictionSlider;
 
     //the offset between the mouse and the top left corner of the ball image
     private double xOffset, yOffset;
@@ -64,11 +77,27 @@ public class MainWindowController implements Initializable {
         //allows the canvas to resize
         canvas.heightProperty().bind(Main.windowHeight.subtract(toolbar.getHeight() + 100));
         canvas.widthProperty().bind(Main.windowWidth.subtract(20));
+        canvas.heightProperty().addListener(e -> {
+            if (runMainThread) {
+                yStopped1 = yStopped2 = false;
+            }
+            else {
+                stopMainThread();
+                try {
+                    Thread.sleep((int) MAIN_THREAD_REFRESH_DELAY);
+                } catch (InterruptedException e1) {
+                    e1.printStackTrace();
+                }
+                startMainThread();
+            }
+        });
+
+        //bind the variables to the slider values
+        GRAVITY_ACCELERATION.bind(gravitySlider.valueProperty());
+        FRICTION_DECELERATION.bind(frictionSlider.valueProperty());
 
         //clears the canvas
         g = canvas.getGraphicsContext2D();
-        g.setFill(Color.WHITE);
-        g.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
         //creates the ball
         ball = new Ball(new Image("PhysicsEngine/ball.png"), BALL_STARTING_X, BALL_STARTING_Y, BALL_STARTING_X_VELOCITY, BALL_STARTING_Y_VELOCITY);
@@ -83,7 +112,8 @@ public class MainWindowController implements Initializable {
 
                 startMouseTracker();
                 stopMainThread();
-            } else mouseInsideBall = false;
+            }
+            else mouseInsideBall = false;
         });
         //allows the ball to be moved with the mouse, keeping it in the bounds of the canvas
         canvas.setOnMouseDragged(e -> {
@@ -126,6 +156,7 @@ public class MainWindowController implements Initializable {
     //determines if the ball is resting on the bottom of the screen. If two revolutions of main thread remain in same y position, it is
     private boolean yStopped1, yStopped2;
 
+
     //THE MAIN THREAD -- Controls all of the physics and movement of the ball
     //this indirect starting method only needed because resetting x velocity should NOT reset timeFalling, everything else should
     private void startMainThread() {
@@ -151,32 +182,45 @@ public class MainWindowController implements Initializable {
                     if (ball.getX() + xVelocity < 0) {
                         ball.setX(0);
                         hitSideHorizontal();
-                    } else if (ball.getX() + ball.getWidth() + xVelocity > canvas.getWidth()) {
+                    }
+                    else if (ball.getX() + ball.getWidth() + xVelocity > canvas.getWidth()) {
                         ball.setX(canvas.getWidth() - ball.getWidth());
                         hitSideHorizontal();
-                    } else ball.setX(ball.getX() + xVelocity);
+                    }
+                    else ball.setX(ball.getX() + xVelocity);
 
-                    if (!yStopped2) {
+                    if (yStopped2) {
+                        if (ball.getxVelocity() == 0)
+                            stopMainThread();
+
+                        if (ball.getxVelocity() < 0)
+                            ball.setxVelocity(ball.getxVelocity() + FRICTION_DECELERATION.get());
+                        else
+                            ball.setxVelocity(ball.getxVelocity() - FRICTION_DECELERATION.get());
+                    }
+                    else {
                         if (ball.getY() + yVelocity < 0) {
                             ball.setY(0);
                             hitSideVertical();
                             yStopped1 = false;
-                        } else if (ball.getY() + ball.getHeight() + yVelocity > canvas.getHeight()) {
+                        }
+                        else if (ball.getY() + ball.getHeight() + yVelocity > canvas.getHeight()) {
                             ball.setY(canvas.getHeight() - ball.getHeight());
                             hitSideVertical();
 
                             if (!yStopped1)
                                 yStopped1 = true;
                             else yStopped2 = true;
-                        } else {
+
+                        }
+                        else {
                             ball.setY(ball.getY() + yVelocity);
                             yStopped1 = false;
                         }
 
                         //GRAVITY
-                        ball.setyVelocity(ball.getyVelocity() + ((GRAVITY_ACCELERATION * (timeFalling)) / 1000));
-                    } else if (ball.getxVelocity() == 0)
-                        stopMainThread();
+                        ball.setyVelocity(ball.getyVelocity() + ((GRAVITY_ACCELERATION.get() * (timeFalling)) / 1000));
+                    }
 
                     g.drawImage(ball.getImg(), ball.getX(), ball.getY());
 
@@ -250,7 +294,6 @@ public class MainWindowController implements Initializable {
     //sets the x velocity of the ball
     public void setXVelocity() {
         try {
-            System.out.print("Before: " + ball.getyVelocity() + "   After: ");
             stopMainThread();
             Thread.sleep((int) MAIN_THREAD_REFRESH_DELAY);
             ball.setxVelocity(Integer.parseInt(xVelTextBox.getText()));

@@ -4,32 +4,44 @@
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="PhysicsEngine.MainWindowController">
+<VBox prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="PhysicsEngine.MainWindowController">
     <HBox fx:id="toolbar" prefHeight="100.0" prefWidth="200.0" spacing="10.0" VBox.vgrow="NEVER">
-        <Button mnemonicParsing="false" text="Stop Ball" onAction="#stopBall"/>
-        <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS"/>
-        <Label prefHeight="37.0" text="Set X-Velocity (px/sec):">
+        <Button mnemonicParsing="false" onAction="#stopBall" text="Stop Ball" />
+        <Region minWidth="0.0" prefHeight="200.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
+      <Label fx:id="gravitySlider1" layoutX="275.0" layoutY="15.0" prefHeight="37.0" text="Friction:">
+         <font>
+            <Font name="Arial" size="16.0" />
+         </font>
+      </Label>
+      <Slider fx:id="frictionSlider" blockIncrement="0.1" layoutX="341.0" layoutY="15.0" max="10.0" prefHeight="37.0" value="5.0" />
+      <Label layoutX="491.0" layoutY="15.0" prefHeight="37.0" text="Gravity:">
+         <font>
+            <Font name="Arial" size="16.0" />
+         </font>
+      </Label>
+      <Slider fx:id="gravitySlider" blockIncrement="1.0" max="74.078" prefHeight="37.0" value="37.039" />
+        <Label prefHeight="37.0" text="Set X-Velocity:">
             <font>
-                <Font name="Arial" size="16.0"/>
+                <Font name="Arial" size="16.0" />
             </font>
         </Label>
-        <TextField fx:id="xVelTextBox" prefWidth="75.0" onAction="#setXVelocity"/>
-        <Label prefHeight="37.0" text="Set Y-Velocity (px/sec):">
+        <TextField onAction="#setXVelocity" prefWidth="75.0" fx:id="xVelTextBox" />
+        <Label prefHeight="37.0" text="Set Y-Velocity:">
             <font>
-                <Font name="Arial" size="16.0"/>
+                <Font name="Arial" size="16.0" />
             </font>
         </Label>
-        <TextField fx:id="yVelTextBox" prefWidth="75.0" onAction="#setYVelocity"/>
+        <TextField fx:id="yVelTextBox" onAction="#setYVelocity" prefWidth="75.0" />
         <padding>
-            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
         </padding>
     </HBox>
-    <Canvas fx:id="canvas" height="600.0" width="1000.0"/>
+    <Canvas fx:id="canvas" height="600.0" width="1000.0" />
 </VBox>
