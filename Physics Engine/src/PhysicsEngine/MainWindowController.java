@@ -193,6 +193,7 @@ public class MainWindowController implements Initializable {
                         if (ball.getxVelocity() == 0)
                             stopMainThread();
 
+                        //FRICTION ON BOTTOM OF SCREEN
                         if (ball.getxVelocity() < 0)
                             ball.setxVelocity(ball.getxVelocity() + FRICTION_DECELERATION.get());
                         else
@@ -220,6 +221,12 @@ public class MainWindowController implements Initializable {
 
                         //GRAVITY
                         ball.setyVelocity(ball.getyVelocity() + ((GRAVITY_ACCELERATION.get() * (timeFalling)) / 1000));
+
+                        //AIR RESISTANCE
+                        if (ball.getxVelocity() < 0)
+                            ball.setxVelocity(ball.getxVelocity() + (FRICTION_DECELERATION.get() / 5));
+                        else
+                            ball.setxVelocity(ball.getxVelocity() - (FRICTION_DECELERATION.get() / 5));
                     }
 
                     g.drawImage(ball.getImg(), ball.getX(), ball.getY());
@@ -298,7 +305,6 @@ public class MainWindowController implements Initializable {
             Thread.sleep((int) MAIN_THREAD_REFRESH_DELAY);
             ball.setxVelocity(Integer.parseInt(xVelTextBox.getText()));
             beginMainThread();
-            System.out.println(ball.getyVelocity());
         } catch (NumberFormatException e) {
         } catch (Exception e) {
             e.printStackTrace();
