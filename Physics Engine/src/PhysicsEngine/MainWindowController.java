@@ -11,7 +11,6 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 
 import java.awt.*;
-import java.awt.event.WindowEvent;
 import java.net.URL;
 import java.util.ResourceBundle;
 
