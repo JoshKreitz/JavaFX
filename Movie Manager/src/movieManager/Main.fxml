@@ -2,13 +2,13 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.*?>
 <?import javafx.stage.Screen?>
-<VBox prefHeight="200.0" prefWidth="200.0" maxWidth="Infinity" spacing="10" alignment="CENTER" xmlns:fx="http://javafx.com/fxml" fx:controller="movieManager.MainController">
+<VBox prefHeight="250.0" prefWidth="200.0" maxWidth="Infinity" spacing="10" alignment="CENTER" xmlns:fx="http://javafx.com/fxml" fx:controller="movieManager.MainController">
 	<fx:define>
 	    <Screen fx:factory="getPrimary" fx:id="screen" />
 	</fx:define>
 	
 	<padding>
-	   <Insets bottom="20.0" left="20.0" right="20.0" top="0.0" />
+	   <Insets bottom="20.0" left="20.0" right="20.0" top="10.0" />
 	</padding>
 	
 	<HBox alignment="CENTER" spacing="10" prefWidth="${screen.visualBounds.width}">
@@ -24,25 +24,28 @@
 	
 	<Separator orientation="HORIZONTAL" />
 	
-	<Label fx:id="currentFile" text="Current File" />
+	<!--  <Label fx:id="currentFile" text="Current File" />-->
+	<TextField fx:id="editedNameField" />
+	<Label fx:id="origNameLabel" />
+	<Label fx:id="folderNameLabel" />
+	
 	
 	<HBox alignment="CENTER" spacing="10">
 		<children>
-			<Button text="Prev" />
-			<Button text="Next" />
-			<Button text="Save + Next" />
+			<Button fx:id="prevButton" text="Prev" onAction="#prevFile" />
+			<Button fx:id="nextButton" text="Next" onAction="#nextFile" />
+			<Button fx:id="saveAndNextButton" text="Save + Next" />
 		</children>
 	</HBox>
 	
+	<!-- 
 	<GridPane alignment="CENTER">
-		<Label text="Death Proof.2007.720p.BRRip.x264.YIFY" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
 		<Separator orientation="VERTICAL" GridPane.rowIndex="0" GridPane.columnIndex="1" />
-		<TextField text="Death Proof.2007.720p.BRRip.x264.YIFY" GridPane.rowIndex="0" GridPane.columnIndex="2" />
-	</GridPane>
+	</GridPane> -->
 	
 	<HBox alignment="CENTER" spacing="10" >
 		<children>
-			<Button text="Restore Original" />
+			<!-- <Button text="Restore Original" /> -->
 			<Button text="Save" />
 			<VBox>
 				<children>
@@ -55,10 +58,15 @@
 	
 	<Separator orientation="HORIZONTAL" />
 	
-	<TableView>
+	<TableView fx:id="fileTable">
 		<columns>
-			<TableColumn text="Filenames" />
-			<TableColumn text="Dir Contents" />
+			<TableColumn fx:id="nameCol" text="Filename" prefWidth="200" />
+			<TableColumn fx:id="typeCol" text="Type" prefWidth="50" />
+			<TableColumn fx:id="contentsCol" text="Contents" prefWidth="1000" />
 		</columns>
+		<sortOrder>
+          <fx:reference source="typeCol"/>
+          <fx:reference source="nameCol"/>
+     </sortOrder> 
 	</TableView>
 </VBox>
