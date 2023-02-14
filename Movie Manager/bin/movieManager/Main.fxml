@@ -32,9 +32,9 @@
 	
 	<HBox alignment="CENTER" spacing="10">
 		<children>
-			<Button fx:id="prevButton" text="Prev" onAction="#prevFile" />
-			<Button fx:id="nextButton" text="Next" onAction="#nextFile" />
-			<Button fx:id="saveAndNextButton" text="Save + Next" />
+			<Button text="Prev" onAction="#prevFile" />
+			<Button text="Next" onAction="#nextFile" />
+			<Button text="Save + Next" onAction="#saveAndNext" />
 		</children>
 	</HBox>
 	
@@ -46,11 +46,11 @@
 	<HBox alignment="CENTER" spacing="10" >
 		<children>
 			<!-- <Button text="Restore Original" /> -->
-			<Button text="Save" />
+			<Button text="Save" onAction="#saveFile" />
 			<VBox>
 				<children>
-					<CheckBox text="Also modify subtitle file, if present" />
-					<CheckBox text="Squash folder" />
+					<CheckBox fx:id="subFileCheckBox" text="Also modify subtitle file, if present" selected="true" />
+					<CheckBox fx:id="folderSquashCheckBox" text="Squash folder" selected="true" />
 				</children>
 			</VBox>
 		</children>
@@ -69,4 +69,6 @@
           <fx:reference source="nameCol"/>
      </sortOrder> 
 	</TableView>
+	
+	<Button text="Copy Manifest to Clipboard" onAction="#copyManifest" />
 </VBox>
