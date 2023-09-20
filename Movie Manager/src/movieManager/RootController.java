@@ -5,18 +5,16 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import movieManager.fileManager.FileManagerController;
+import movieManager.movieShelf.ShelfController;
 
 public class RootController {
-	@FXML
-	private TabPane tabPane;
+	@FXML private TabPane tabPane;
 
-	// Inject tab content
-	@FXML
-	private Tab fileManagerTab;
+	@FXML private Tab fileManagerTab;
+	@FXML private FileManagerController fileManagerController;
 
-	// Inject tab controller
-	@FXML
-	private FileManagerController fileManagerController;
+	@FXML private Tab movieShelfTab;
+	@FXML private ShelfController movieShelfController;
 
 	public void init() {
 		tabPane.getSelectionModel().selectedItemProperty()
@@ -26,7 +24,12 @@ public class RootController {
 						System.out.println("fileManagerController=" + fileManagerController);
 
 						// xxx_tab2bar_xxxController.handleTab2ButtonBar();
-					} else {
+					} 
+					else if (newValue == movieShelfTab) {
+						System.out.println("Movie Shelf Tab");
+						System.out.println("movieShelfController=" + movieShelfController);
+					}
+					else {
 						System.out.println("SOMETHING GOOFED");
 					}
 				});

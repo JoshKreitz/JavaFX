@@ -13,3 +13,4 @@ Desired functionality:
 	- Display movies in a dense fashion
 	- Filter based on tags/ratings
 	- Search for a specific movie
+	- Default config file to autoload directory
