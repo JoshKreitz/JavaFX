@@ -1,4 +1,4 @@
-package movieManager;
+package movieManager.fileManager;
 
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
@@ -29,11 +29,10 @@ import javafx.scene.input.KeyEvent;
 
 /**
  * TODO:
- * 		- add an output for a text based list of movies to be copied 	
  * 		- (eventually) add support for large folders (TV shows?)
  */
 
-public class MainController implements Initializable {
+public class FileManagerController implements Initializable {
 
 	/**
 	 *  UI ELEMENTS
@@ -247,6 +246,9 @@ public class MainController implements Initializable {
 			
 			// attempt to identify year and resolution
 			for(String s : parts) {
+				if(s.isEmpty())
+					continue;
+				
 				// check for a year surrounded by parenthesis and remove them
 				if(s.length() == 6 && s.charAt(0) == '(' && s.charAt(5) == ')' && Character.isDigit(s.charAt(1))) {
 					s = s.substring(1, 4);

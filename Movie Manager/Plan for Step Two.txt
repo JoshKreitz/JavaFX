@@ -1,0 +1,15 @@
+Movie metadata:
+	- Populated from the internet:
+		- Photo or two
+		- Genres
+		- IMDB rating
+		- Description?
+		- Link to trailer?
+	- My own tags
+	- My own rating
+	
+	
+Desired functionality:
+	- Display movies in a dense fashion
+	- Filter based on tags/ratings
+	- Search for a specific movie

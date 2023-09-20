@@ -1,4 +1,4 @@
-package movieManager;
+package movieManager.fileManager;
 
 public class FileView {
 	
