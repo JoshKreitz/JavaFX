@@ -5,7 +5,7 @@ Movie metadata:
 		- IMDB rating
 		- Description?
 		- Link to trailer?
-	- My own tags
+	- My own tags (unseen)
 	- My own rating
 	
 	
@@ -14,3 +14,47 @@ Desired functionality:
 	- Filter based on tags/ratings
 	- Search for a specific movie
 	- Default config file to autoload directory
+	
+	
+poster API: https://codepen.io/pixelnik/pen/pgWQBZ
+https://developer.themoviedb.org/docs
+
+
+Inputting movies:
+	- drag and drop into folder
+	- when program started, kick off new thread to do the following:
+		- search movies and identify new ones
+		- query DB and retrieve metadata
+		- update movie as retrieved - tag on the file?
+		- update the view so data propagates
+	- if no match: popup presented to select one based on release dates/genres/desc
+		
+Flow:
+	- Tiled movie posters, scaled to the same size. Probably makes sense for them to be buttons
+	- Hover text shows genres/tags
+	- Click triggers a popup with more images, full description, and a button to kickstart VLC
+
+
+		
+Additional config options:
+	- default torrent directory
+	- default shelf directory
+	- max number of photos per movie
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		

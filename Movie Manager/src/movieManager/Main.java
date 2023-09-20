@@ -25,7 +25,7 @@ public class Main extends Application {
 		primaryStage.setMaximized(false);
 
 		Scene scene = new Scene(fxmlLoader, 1000, 700);
-		scene.getStylesheets().add(Main.class.getResource("Style.css").toExternalForm());
+		scene.getStylesheets().add(Main.class.getResource("style.css").toExternalForm());
 
 		primaryStage.setScene(scene);
 		primaryStage.show();
