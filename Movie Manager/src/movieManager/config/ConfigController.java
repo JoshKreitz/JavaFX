@@ -1,5 +1,8 @@
 package movieManager.config;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.URL;
@@ -9,19 +12,53 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 
 public class ConfigController implements Initializable {
 
+	private final String CONFIG_FILE_LOCATION="~/MovieManagerConfig.txt";
+	
 	@FXML private TextArea stderrTextArea;
 
+	@FXML private TextField fileManagerDirTextField;
+	@FXML private TextField shelfDirTextField;
+	
+	private ConfigFile config;
+	private String tmp = "default";
+
 	@Override
-	public void initialize(URL arg0, ResourceBundle arg1) {
+	public void initialize(URL location, ResourceBundle resources) {
 		redirectSystemErrToTextArea();
 	}
 
+	public void initData(ConfigFile config) {
+		if (this.config != null) {
+			throw new IllegalStateException("ConfigFile can only be initialized once");
+		}
+		
+		System.out.println("hit" + config.getFileManagerDir());
+		this.config = config;
+		tmp = "changed";
+	}
+
+	public void resetFields() {
+		
+	}
+
+	public void saveFields() {
+		System.out.println(config == null ? "null" : config.getFileManagerDir());
+		System.out.println(tmp);
+	}
+	
 	private void redirectSystemErrToTextArea() {
 		PrintStream ps = new PrintStream(new ConsoleOutputStream(), true);
-		System.setErr(ps);
+		//System.setErr(ps);
+	}
+	
+	public void copyErrorConsole() {
+		StringSelection stringSelection = new StringSelection(stderrTextArea.getText());
+		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+		clipboard.setContents(stringSelection, null);
 	}
 
 	private class ConsoleOutputStream extends OutputStream {
