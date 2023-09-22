@@ -68,14 +68,14 @@ public class Main extends Application {
 		root.getSelectionModel().selectedItemProperty()
 				.addListener((ObservableValue<? extends Tab> observable, Tab oldValue, Tab newValue) -> {
 					if (newValue == fileManagerTab) {
-						System.out.println("File Manager Tab");
-						System.out.println("fileManagerController=" + fileManagerController);
+//						System.out.println("File Manager Tab");
+//						System.out.println("fileManagerController=" + fileManagerController);
 					} else if (newValue == shelfTab) {
-						System.out.println("Movie Shelf Tab");
-						System.out.println("movieShelfController=" + shelfController);
+//						System.out.println("Movie Shelf Tab");
+//						System.out.println("movieShelfController=" + shelfController);
 					} else if (newValue == configTab) {
-						System.out.println("Config Tab");
-						System.out.println("configController=" + configController);
+//						System.out.println("Config Tab");
+//						System.out.println("configController=" + configController);
 						//TODO save file before leaving?
 					} else {
 						System.out.println("SOMETHING GOOFED");

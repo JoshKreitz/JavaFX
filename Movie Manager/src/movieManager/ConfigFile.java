@@ -55,13 +55,8 @@ public class ConfigFile {
 			throw new ParseException("No delimiter found on line: " + line, 0);
 		}
 
-		String[] params = line.split(DELIMITER);
-
-		if (params.length != 2) {
-			throw new ParseException("More or less than two arguments for line: " + line, 0);
-		}
-
-		fileContents.put(params[0], params[1]);
+		int delimIndex = line.indexOf(DELIMITER);
+		fileContents.put(line.substring(0, delimIndex), line.substring(delimIndex + 1));
 	}
 
 	public void saveFile() {
