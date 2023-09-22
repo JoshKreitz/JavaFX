@@ -26,6 +26,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import movieManager.config.ConfigFile;
 
 /**
  * TODO: - (eventually) add support for large folders (TV shows?)
@@ -69,6 +70,8 @@ public class FileManagerController implements Initializable {
 	File subFile;
 
 	boolean squashedDir = false;
+	
+	private ConfigFile config;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -78,6 +81,14 @@ public class FileManagerController implements Initializable {
 
 		subFileCheckBox.setIndeterminate(false);
 		folderSquashCheckBox.setIndeterminate(false);
+	}
+
+	public void initData(ConfigFile config) {
+		if (this.config != null) {
+			throw new IllegalStateException("ConfigFile can only be initialized once");
+		}
+		
+		this.config = config;
 	}
 
 	public void loadBerthaSourceDir() {

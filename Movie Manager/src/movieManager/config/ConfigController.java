@@ -24,7 +24,6 @@ public class ConfigController implements Initializable {
 	@FXML private TextField shelfDirTextField;
 	
 	private ConfigFile config;
-	private String tmp = "default";
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -36,9 +35,7 @@ public class ConfigController implements Initializable {
 			throw new IllegalStateException("ConfigFile can only be initialized once");
 		}
 		
-		System.out.println("hit" + config.getFileManagerDir());
 		this.config = config;
-		tmp = "changed";
 	}
 
 	public void resetFields() {
@@ -46,8 +43,6 @@ public class ConfigController implements Initializable {
 	}
 
 	public void saveFields() {
-		System.out.println(config == null ? "null" : config.getFileManagerDir());
-		System.out.println(tmp);
 	}
 	
 	private void redirectSystemErrToTextArea() {
