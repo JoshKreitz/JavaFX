@@ -26,7 +26,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import movieManager.config.ConfigFile;
+import movieManager.ConfigFile;
 
 /**
  * TODO: - (eventually) add support for large folders (TV shows?)

@@ -13,11 +13,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import movieManager.ConfigFile;
 
 public class ConfigController implements Initializable {
-
-	private final String CONFIG_FILE_LOCATION="~/MovieManagerConfig.txt";
-	
 	@FXML private TextArea stderrTextArea;
 
 	@FXML private TextField fileManagerDirTextField;
@@ -36,16 +34,23 @@ public class ConfigController implements Initializable {
 		}
 		
 		this.config = config;
+		resetFields();
 	}
 
 	public void resetFields() {
-		
+		fileManagerDirTextField.setText(config.getFileManagerDir());
+		shelfDirTextField.setText(config.getShelfDir());
 	}
 
 	public void saveFields() {
+		//TODO ADD VALIDATION
+		config.setFileManagerDir(fileManagerDirTextField.getText());
+		config.setShelfDir(shelfDirTextField.getText());
+		config.saveFile();
 	}
 	
 	private void redirectSystemErrToTextArea() {
+		//TODO enable this before final build
 		PrintStream ps = new PrintStream(new ConsoleOutputStream(), true);
 		//System.setErr(ps);
 	}

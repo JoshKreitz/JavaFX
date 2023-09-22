@@ -4,7 +4,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import javafx.fxml.Initializable;
-import movieManager.config.ConfigFile;
+import movieManager.ConfigFile;
 
 public class ShelfController implements Initializable {
 

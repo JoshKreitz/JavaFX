@@ -12,7 +12,6 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TabPane.TabClosingPolicy;
 import javafx.stage.Stage;
 import movieManager.config.ConfigController;
-import movieManager.config.ConfigFile;
 import movieManager.fileManager.FileManagerController;
 import movieManager.movieShelf.ShelfController;
 
@@ -29,7 +28,7 @@ public class Main extends Application {
 		root = new TabPane();
 		root.setTabClosingPolicy(TabClosingPolicy.UNAVAILABLE);
 
-		config = new ConfigFile("test");
+		config = new ConfigFile();
 
 		loadTabs();
 
@@ -77,6 +76,7 @@ public class Main extends Application {
 					} else if (newValue == configTab) {
 						System.out.println("Config Tab");
 						System.out.println("configController=" + configController);
+						//TODO save file before leaving?
 					} else {
 						System.out.println("SOMETHING GOOFED");
 					}
