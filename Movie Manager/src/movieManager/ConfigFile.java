@@ -75,7 +75,7 @@ public class ConfigFile {
 	}
 
 	public void setFileManagerDir(String dir) {
-		fileContents.put(FILE_MANAGER_DIR_NAME, dir);
+		fileContents.put(FILE_MANAGER_DIR_NAME, normalizeTrailingSlash(dir));
 	}
 
 	public String getShelfDir() {
@@ -83,6 +83,16 @@ public class ConfigFile {
 	}
 
 	public void setShelfDir(String dir) {
-		fileContents.put(SHELF_DIR_NAME, dir);
+		fileContents.put(SHELF_DIR_NAME, normalizeTrailingSlash(dir));
+	}
+	
+	public static String normalizeTrailingSlash(String dir) {
+		// add trailing slash if necessary
+		if (dir.contains("/") && !dir.endsWith("/"))
+			dir += "/";
+		else if (dir.contains("\\") && !dir.endsWith("\\"))
+			dir += "\\";
+		
+		return dir;
 	}
 }

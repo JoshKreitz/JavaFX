@@ -44,6 +44,10 @@ Local storage (located in movie dir):
 			- File[s]: photo<index>.jpg
 			- File: data.txt (description, release date, genres, etc)
 
+Up next:
+	- create file infrastructure (^^^^^)
+	- create popup layout
+	- create background task and get data!
 
 
 		
@@ -52,6 +56,16 @@ Additional config options:
 	- default shelf directory
 	- max number of photos per movie
 		
+		
+		
+Add in the future?
+	- my own ratings/ticks
+	- trailer links
+	- rating from API
+	- multiple images
+	- sort by release date/ratings
+	- prompt the user to load backup SER file if index fails to load
+	- path validation
 		
 		
 		

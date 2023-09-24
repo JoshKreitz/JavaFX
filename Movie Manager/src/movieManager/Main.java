@@ -13,11 +13,13 @@ import javafx.scene.control.TabPane.TabClosingPolicy;
 import javafx.stage.Stage;
 import movieManager.config.ConfigController;
 import movieManager.fileManager.FileManagerController;
+import movieManager.metadata.MetadataManager;
 import movieManager.movieShelf.ShelfController;
 
 public class Main extends Application {
 	TabPane root;
 	ConfigFile config;
+	MetadataManager metadataManager;
 
 	public static void main(String[] args) {
 		launch(args);
@@ -29,6 +31,7 @@ public class Main extends Application {
 		root.setTabClosingPolicy(TabClosingPolicy.UNAVAILABLE);
 
 		config = new ConfigFile();
+		metadataManager = new MetadataManager(config);
 
 		loadTabs();
 
@@ -77,7 +80,7 @@ public class Main extends Application {
 					} else if (newValue == configTab) {
 //						System.out.println("Config Tab");
 //						System.out.println("configController=" + configController);
-						//TODO save file before leaving?
+						// TODO save file before leaving?
 					} else {
 						System.out.println("SOMETHING GOOFED");
 					}
