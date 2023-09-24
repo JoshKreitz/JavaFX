@@ -1,12 +1,15 @@
 package movieManager.metadata;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javafx.scene.image.Image;
 
 // bean-style data class to sum up all the metadata a movie has
-public class MovieMetadata {
+public class MovieMetadata implements Serializable {
 
+	private static final long serialVersionUID = 1L;
+	
 	private int movieId;
 	private String title;
 	private String releaseDate;
@@ -75,5 +78,10 @@ public class MovieMetadata {
 
 	public void setMovieId(int movieId) {
 		this.movieId = movieId;
+	}
+	
+	@Override
+	public String toString() {
+		return String.format("MovieMetadata[%d,%s,%s,%s,%s]", movieId, title, releaseDate, description, genres.toString());
 	}
 }

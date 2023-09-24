@@ -45,7 +45,10 @@ Local storage (located in movie dir):
 			- File: data.txt (description, release date, genres, etc)
 
 Up next:
-	- create file infrastructure (^^^^^)
+	- link UI to metadata
+		- implement popup UI
+		- look for "movieId.jpg" in the metadata folder
+	- generate metadata
 	- create popup layout
 	- create background task and get data!
 

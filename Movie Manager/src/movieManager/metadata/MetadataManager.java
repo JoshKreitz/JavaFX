@@ -1,6 +1,8 @@
 package movieManager.metadata;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,7 +22,7 @@ public class MetadataManager {
 
 	// translate filenames to Ids
 	// this object will get serialized and saved to a file
-	private Map<String, MovieMetadata> filenamesToIds;
+	private Map<String, MovieMetadata> metadata;
 
 	private ConfigFile config;
 	private Serializer<String, MovieMetadata> serializer;
@@ -31,6 +33,9 @@ public class MetadataManager {
 		this.config = config;
 
 		loadMetadata();
+		
+		//metadata.put("test test(2004) 720p", new MovieMetadata(1234, "1", "2", "3", Arrays.asList("scary", "stupid")));
+		//System.out.println(metadata.get("test test(2004) 720p"));
 	}
 
 	// for when the shelf dir changes
@@ -43,7 +48,7 @@ public class MetadataManager {
 		metadataFolderPath = ConfigFile.normalizeTrailingSlash(config.getShelfDir() + METADATA_FOLDER_NAME);
 		
 		createMetadataFolder();
-		serializer = new Serializer(metadataFolderPath);
+		serializer = new Serializer<String,MovieMetadata>(metadataFolderPath);
 
 		loadFilenameIndex();
 	}
@@ -64,15 +69,15 @@ public class MetadataManager {
 
 	// loads the filename index from the serialized file, if it exists
 	private void loadFilenameIndex() {
-		filenamesToIds = serializer.readSerializedMap();
-		if (filenamesToIds == null) {
-			filenamesToIds = new HashMap<String, MovieMetadata>();
+		metadata = serializer.readSerializedMap();
+		if (metadata == null) {
+			metadata = new HashMap<String, MovieMetadata>();
 		}
 
 		// add exit shutdown hook to save the map before closing the application
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-			if (!filenamesToIds.isEmpty())
-				serializer.saveSerializedMap(filenamesToIds);
+			if (!metadata.isEmpty())
+				serializer.saveSerializedMap(metadata);
 		}));
 
 	}
