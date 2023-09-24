@@ -14,7 +14,8 @@
 
 	<HBox alignment="CENTER" spacing="10" prefWidth="${screen.visualBounds.width}">
 		<children>
-			<Button text="Load Bertha Torrents" onAction="#loadBerthaSourceDir" />
+			<Label fx:id="defaultSourceDir" />
+			<Button text="Load Default Directory" onAction="#loadDefaultSourceDir" />
 			<Separator orientation="VERTICAL" />
 			<Label text="Source Directory:" />
 			<TextField fx:id="sourceDirTextField" onKeyPressed="#sourceDirKeyPress" />

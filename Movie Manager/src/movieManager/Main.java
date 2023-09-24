@@ -68,6 +68,7 @@ public class Main extends Application {
 		root.getSelectionModel().selectedItemProperty()
 				.addListener((ObservableValue<? extends Tab> observable, Tab oldValue, Tab newValue) -> {
 					if (newValue == fileManagerTab) {
+						fileManagerController.updateDefaultSourceDir();
 //						System.out.println("File Manager Tab");
 //						System.out.println("fileManagerController=" + fileManagerController);
 					} else if (newValue == shelfTab) {

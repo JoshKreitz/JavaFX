@@ -41,6 +41,7 @@ public class FileManagerController implements Initializable {
 	// Source directory elements
 	@FXML private TextField sourceDirTextField;
 	@FXML private Label sourceDirStatus;
+	@FXML private Label defaultSourceDir;
 
 	// Table elements
 	@FXML private TableView<FileView> fileTable;
@@ -89,10 +90,11 @@ public class FileManagerController implements Initializable {
 		}
 		
 		this.config = config;
+		updateDefaultSourceDir();
 	}
 
-	public void loadBerthaSourceDir() {
-		load(BERTHA_PATH);
+	public void loadDefaultSourceDir() {
+		load(config.getFileManagerDir());
 	}
 
 	public void loadTextFieldSourceDir() {
@@ -103,6 +105,10 @@ public class FileManagerController implements Initializable {
 		if (e.getCode().equals(KeyCode.ENTER)) {
 			load(sourceDirTextField.getText());
 		}
+	}
+	
+	public void updateDefaultSourceDir() {
+		defaultSourceDir.setText(config.getFileManagerDir());
 	}
 
 	// initialize the tool once the directory is specified

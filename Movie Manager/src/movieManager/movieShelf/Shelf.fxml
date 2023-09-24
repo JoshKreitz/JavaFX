@@ -1,10 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.*?>
+<?import javafx.stage.Screen?>
 
 <VBox xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.111" fx:controller="movieManager.movieShelf.ShelfController">
-	<Label fx:id="tab2_label_showText" text="Tab2_start" />
-	<Button fx:id="tab2_button_bar" text="tab2_button_bar" />
+	<ToolBar>
+		<items>
+			<HBox spacing="3" HBox.hgrow="ALWAYS" alignment="CENTER">
+				<children>
+					<Button fx:id="a" text="Genre1" styleClass="genreButton" />
+					<Button fx:id="b" text="Genre2" styleClass="genreButton" />
+					<Button fx:id="c" text="Genre3" styleClass="genreButton" />
+					<Button fx:id="d" text="Genre4" styleClass="genreButton" />
+					<TextField text="Search..." />
+					<Pane HBox.hgrow="ALWAYS" />
+					<Label fx:id="loadingLabel" text="downloading metadata..." alignment="BASELINE_RIGHT" />
+					<ProgressIndicator maxHeight="25" maxWidth="25" focusTraversable="false" />
+				</children>
+			</HBox>
+		</items>
+	</ToolBar>
 </VBox>

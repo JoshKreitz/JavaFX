@@ -9,6 +9,18 @@
 	-fx-font-family: "Lucida Console", Monaco, monospace;
 	-fx-font-size: 20px;
 	-fx-word-spacing: 2px;
-	-fx-font-weight: 700;
+	-fx-font-weight: bold;
 	-fx-font-variant: small-caps;
+}
+
+.genreButton {
+	/* -fx-text-fill: #006464; 
+    -fx-background-color: #DFB951;*/
+    -fx-border-radius: 20;
+    -fx-background-radius: 20;
+    -fx-padding: 4px 5px;
+}
+
+#loadingLabel {
+	-fx-font-style: italic;
 }
