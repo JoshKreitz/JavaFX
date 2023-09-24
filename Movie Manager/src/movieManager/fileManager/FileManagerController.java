@@ -122,6 +122,10 @@ public class FileManagerController implements Initializable {
 
 	// populate the "directory" variable and make sure it's valid
 	private boolean loadDirectory(String path) {
+		if(path.contains("\\") && !path.contains("\\\\")) {
+			path.replace("\\", "/");
+		}
+		
 		File dir = new File(path);
 
 		if (!dir.exists()) {
@@ -212,6 +216,10 @@ public class FileManagerController implements Initializable {
 
 	// load the file at the current index
 	private void loadFile() {
+		if(dirFiles.isEmpty()) {
+			return;
+		}
+		
 		File file = dirFiles.get(dirIndex);
 
 		if (file.isDirectory()) {

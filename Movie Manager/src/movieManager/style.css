@@ -24,3 +24,13 @@
 #loadingLabel {
 	-fx-font-style: italic;
 }
+
+.popup {
+	-fx-background-color: #5C5C5C;
+}
+
+.debug {
+	-fx-background-color: #4447B2;
+	-fx-border-color: black;
+	-fx-border-width:2;
+}

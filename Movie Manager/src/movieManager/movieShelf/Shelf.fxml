@@ -4,6 +4,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.*?>
 <?import javafx.stage.Screen?>
+<?import movieManager.movieShelf.MoviePane ?>
 
 <VBox xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.111" fx:controller="movieManager.movieShelf.ShelfController">
 	<ToolBar>
@@ -22,4 +23,8 @@
 			</HBox>
 		</items>
 	</ToolBar>
+	<FlowPane>
+		<MoviePane movieId="one" />
+		<MoviePane movieId="two" />
+	</FlowPane>
 </VBox>

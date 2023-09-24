@@ -35,6 +35,17 @@ Flow:
 	- Click triggers a popup with more images, full description, and a button to kickstart VLC
 
 
+
+Local storage (located in movie dir):
+.MovieManagerMetadata:
+	- File: Serialized map from filename -> ID
+	- Dir: Metadata
+		- Dir: <ID>
+			- File[s]: photo<index>.jpg
+			- File: data.txt (description, release date, genres, etc)
+
+
+
 		
 Additional config options:
 	- default torrent directory
