@@ -46,10 +46,10 @@ Local storage (located in movie dir):
 
 Up next:
 	- link UI to metadata
-		- implement popup UI
-		- look for "movieId.jpg" in the metadata folder
-	- generate metadata
-	- create popup layout
+		- load file names from shelf folder in metadata manager
+		- finish implementing popup
+		- add handling for changing shelf dir
+		- look for images "movieId.jpg" in the metadata folder
 	- create background task and get data!
 
 
@@ -69,6 +69,8 @@ Add in the future?
 	- sort by release date/ratings
 	- prompt the user to load backup SER file if index fails to load
 	- path validation
+	- file manager option to move movie into shelf dir
+	- file tags ("to watch")
 		
 		
 		

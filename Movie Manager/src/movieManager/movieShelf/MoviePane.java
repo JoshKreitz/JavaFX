@@ -15,8 +15,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.stage.Popup;
 import javafx.util.Duration;
+import movieManager.metadata.MovieMetadata;
 
-public class MoviePane extends Pane {
+public class MoviePane extends Pane implements Comparable<MoviePane> {
 
 	@FXML private Pane moviePane;
 	@FXML private ImageView imageView;
@@ -25,12 +26,11 @@ public class MoviePane extends Pane {
 	@FXML private HBox popupContent;
 
 	@FXML private Button tmpButton; // TODO remove
-	
 
-	private final SimpleStringProperty movieId = new SimpleStringProperty();
+	private MovieMetadata metadata;
 
-	public MoviePane(@NamedArg("movieId") String tmp) {
-		this.movieId.set(tmp);
+	public MoviePane(MovieMetadata metadata) {
+		this.metadata = metadata;
 
 		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("MoviePane.fxml"));
 		fxmlLoader.setRoot(this);
@@ -48,7 +48,8 @@ public class MoviePane extends Pane {
 		Image image = new Image("file:images/photo.JPG");
 		imageView.setImage(image);
 
-		tmpButton.textProperty().bind(movieId);
+		// set elements to their metadata values
+		// tmpButton.setText(metadata.getTitle());
 
 		moviePane.setOnMouseEntered(event -> {
 			PauseTransition delay = new PauseTransition(Duration.seconds(.75));
@@ -62,18 +63,41 @@ public class MoviePane extends Pane {
 		});
 
 		moviePane.setOnMouseExited(event -> {
-			if (!popupContent.localToScreen(popupContent.getBoundsInLocal()).contains(event.getScreenX(),
-					event.getScreenY())) {
-				interactivePopup.hide();
-			}
+			PauseTransition delay = new PauseTransition(Duration.seconds(.5));
+			delay.setOnFinished(e -> {
+				if (!moviePane.isHover() && !popupContent.isHover()
+						&& !popupContent.localToScreen(popupContent.getBoundsInLocal()).contains(event.getScreenX(),
+								event.getScreenY())) {
+					interactivePopup.hide();
+				}
+			});
+			delay.playFromStart();
 		});
 
 		popupContent.setOnMouseExited(event -> {
-			if (!popupContent.localToScreen(popupContent.getBoundsInLocal()).contains(event.getScreenX(),
-					event.getScreenY())) {
-				interactivePopup.hide();
-			}
+			PauseTransition delay = new PauseTransition(Duration.seconds(.5));
+			delay.setOnFinished(e -> {
+				if (!moviePane.isHover() && !popupContent.isHover()
+						&& !popupContent.localToScreen(popupContent.getBoundsInLocal()).contains(event.getScreenX(),
+								event.getScreenY())) {
+					interactivePopup.hide();
+				}
+			});
+			delay.playFromStart();
 		});
 
+	}
+
+	public MovieMetadata getMetadata() {
+		return metadata;
+	}
+
+	@Override
+	public int compareTo(MoviePane o) {
+		int titleCmp = metadata.getTitle().compareTo(o.getMetadata().getTitle());
+		if (titleCmp == 0) {
+			return metadata.getReleaseDate().compareTo(o.getMetadata().getReleaseDate());
+		}
+		return titleCmp;
 	}
 }

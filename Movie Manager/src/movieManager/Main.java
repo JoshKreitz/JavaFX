@@ -1,6 +1,7 @@
 package movieManager;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 import javafx.application.Application;
@@ -14,6 +15,8 @@ import javafx.stage.Stage;
 import movieManager.config.ConfigController;
 import movieManager.fileManager.FileManagerController;
 import movieManager.metadata.MetadataManager;
+import movieManager.metadata.MovieMetadata;
+import movieManager.movieShelf.MoviePane;
 import movieManager.movieShelf.ShelfController;
 
 public class Main extends Application {
@@ -33,6 +36,11 @@ public class Main extends Application {
 		config = new ConfigFile();
 		metadataManager = new MetadataManager(config);
 
+		// TODO REMOVE
+
+//		metadataManager.addMetadata("tmp", new MovieMetadata(1234, "test test", "releasedata", "desc", Arrays.asList("genre1", "genre2")));
+//		metadataManager.addMetadata("tmp2", new MovieMetadata(1234, "atest", "releasedata2", "desc2", Arrays.asList("genre12", "genre22")));
+		
 		loadTabs();
 
 		Scene scene = new Scene(root, 1000, 700);
@@ -53,7 +61,7 @@ public class Main extends Application {
 		FXMLLoader shelfLoader = new FXMLLoader(getClass().getResource("movieShelf/Shelf.fxml"));
 		Tab shelfTab = new Tab("Shelf", shelfLoader.load());
 		ShelfController shelfController = shelfLoader.getController();
-		shelfController.initData(config);
+		shelfController.initData(config, metadataManager);
 		tabs.add(shelfTab);
 
 		FXMLLoader fileManagerLoader = new FXMLLoader(getClass().getResource("fileManager/FileManager.fxml"));

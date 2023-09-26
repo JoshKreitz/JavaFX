@@ -12,10 +12,16 @@
 	<fx:define>
 		<Popup fx:id="interactivePopup" autoHide="true" autoFix="true">
 			<content>
-				<HBox fx:id="popupContent" spacing="10">
-					<Button fx:id="tmpButton" text="${moviePane.movieId}" />
-					<Button text="Click Me 2!" />
-				</HBox>
+				<VBox>
+					<padding>
+						<Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+					</padding>
+
+					<HBox fx:id="popupContent" spacing="10" alignment="BOTTOM_CENTER">
+						<Label text="${moviePane.metadata.title}" styleClass="movieTitle" />
+						<Label text="${moviePane.metadata.releaseDate}" styleClass="releaseDate" alignment="BOTTOM_RIGHT" />
+					</HBox>
+				</VBox>
 			</content>
 		</Popup>
 	</fx:define>

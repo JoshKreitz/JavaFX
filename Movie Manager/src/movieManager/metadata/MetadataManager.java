@@ -1,13 +1,8 @@
 package movieManager.metadata;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.management.modelmbean.InvalidTargetObjectTypeException;
-import javax.management.openmbean.InvalidOpenTypeException;
 
 import movieManager.ConfigFile;
 
@@ -33,9 +28,10 @@ public class MetadataManager {
 		this.config = config;
 
 		loadMetadata();
-		
-		//metadata.put("test test(2004) 720p", new MovieMetadata(1234, "1", "2", "3", Arrays.asList("scary", "stupid")));
-		//System.out.println(metadata.get("test test(2004) 720p"));
+
+		// metadata.put("test test(2004) 720p", new MovieMetadata(1234, "1", "2", "3",
+		// Arrays.asList("scary", "stupid")));
+		// System.out.println(metadata.get("test test(2004) 720p"));
 	}
 
 	// for when the shelf dir changes
@@ -46,11 +42,12 @@ public class MetadataManager {
 	// reads in the file structure, creating it if necessary
 	private void loadMetadata() {
 		metadataFolderPath = ConfigFile.normalizeTrailingSlash(config.getShelfDir() + METADATA_FOLDER_NAME);
-		
+
 		createMetadataFolder();
-		serializer = new Serializer<String,MovieMetadata>(metadataFolderPath);
+		serializer = new Serializer<String, MovieMetadata>(metadataFolderPath);
 
 		loadFilenameIndex();
+		loadFiles();
 	}
 
 	// create the folder and parents if it doesnt exist
@@ -82,12 +79,21 @@ public class MetadataManager {
 
 	}
 
-	public MovieMetadata getMetadata(int movieId) {
-		return null; // TODO implement
+	// load all the file names from the shelf directory
+	private void loadFiles() {
+
 	}
 
-	public void saveMetadata(MovieMetadata metadata) {
-		// TODO implement
+	public Map<String, MovieMetadata> getAllMetadata() {
+		return metadata;
+	}
+
+	public MovieMetadata getMetadata(String filename) {
+		return metadata.get(filename);
+	}
+
+	public void addMetadata(String filename, MovieMetadata data) {
+		metadata.put(filename, data);
 	}
 
 }

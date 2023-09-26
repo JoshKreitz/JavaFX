@@ -23,8 +23,5 @@
 			</HBox>
 		</items>
 	</ToolBar>
-	<FlowPane>
-		<MoviePane movieId="one" />
-		<MoviePane movieId="two" />
-	</FlowPane>
+	<FlowPane fx:id="flowPane" />
 </VBox>

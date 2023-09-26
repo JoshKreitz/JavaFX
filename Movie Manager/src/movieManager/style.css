@@ -34,3 +34,21 @@
 	-fx-border-color: black;
 	-fx-border-width:2;
 }
+
+.movieTitle {
+	-fx-font-family: Verdana, Geneva, sans-serif;
+	-fx-font-size: 25px;
+	-fx-color: #000000;
+	-fx-letter-spacing: -2px;
+	-fx-font-weight: 400;
+	-fx-font-variant: small-caps;
+}
+
+.releaseDate {
+	-fx-font-family: Verdana, Geneva, sans-serif;
+	-fx-font-size: 14px;
+	-fx-letter-spacing: -1px;
+	-fx-color: #000000;
+	-fx-font-weight: 400;
+	-fx-font-style: italic;
+}
