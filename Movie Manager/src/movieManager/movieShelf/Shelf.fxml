@@ -18,7 +18,7 @@
 					<TextField text="Search..." />
 					<Pane HBox.hgrow="ALWAYS" />
 					<Label fx:id="loadingLabel" text="downloading metadata..." alignment="BASELINE_RIGHT" />
-					<ProgressIndicator maxHeight="25" maxWidth="25" focusTraversable="false" />
+					<ProgressIndicator fx:id="loadingSpinner" maxHeight="25" maxWidth="25" focusTraversable="false" />
 				</children>
 			</HBox>
 		</items>

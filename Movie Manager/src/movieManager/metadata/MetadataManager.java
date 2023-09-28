@@ -1,42 +1,38 @@
 package movieManager.metadata;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import movieManager.ConfigFile;
 
 public class MetadataManager {
 
-	// establish the file structure if it doesn't exist
-	// read it in if it does exist
-	// maintain root data structures for movie metadata
-	// provide it to UI
-
 	private final String METADATA_FOLDER_NAME = ".MovieManagerMetadata";
 
-	// translate filenames to Ids
-	// this object will get serialized and saved to a file
 	private Map<String, MovieMetadata> metadata;
 
 	private ConfigFile config;
 	private Serializer<String, MovieMetadata> serializer;
+	private NetworkHandler networkHandler;
 
 	private String metadataFolderPath;
 
-	public MetadataManager(ConfigFile config) {
+	public MetadataManager(ConfigFile config, NetworkHandler networkHandler) {
 		this.config = config;
+		this.networkHandler = networkHandler;
 
 		loadMetadata();
-
-		// metadata.put("test test(2004) 720p", new MovieMetadata(1234, "1", "2", "3",
-		// Arrays.asList("scary", "stupid")));
-		// System.out.println(metadata.get("test test(2004) 720p"));
 	}
 
 	// for when the shelf dir changes
 	public void reloadMetadata() {
-
+		loadMetadata();
 	}
 
 	// reads in the file structure, creating it if necessary
@@ -81,7 +77,36 @@ public class MetadataManager {
 
 	// load all the file names from the shelf directory
 	private void loadFiles() {
+		Set<String> existingMetadataFiles = metadata.keySet();
+		List<String> missingMetadataFiles = new ArrayList<String>();
 
+		File[] shelfDirFiles = new File(config.getShelfDir()).listFiles();
+
+		for (File f : shelfDirFiles) {
+			// skip directories and... non-existent files?
+			if (!f.exists() || f.isDirectory())
+				continue;
+
+			String filename = f.getName();
+			if (filename.endsWith(".srt"))
+				continue;
+			else if (!existingMetadataFiles.contains(filename)
+					|| isOlderThanOneYear(metadata.get(filename).getMetadataCreationDate())
+					|| metadata.get(filename).isDefault()) {
+				metadata.remove(filename);
+				missingMetadataFiles.add(filename);
+
+				metadata.put(filename, new MovieMetadata());
+			}
+		}
+
+		removeStaleMetadata(shelfDirFiles);
+		downloadMetadata(missingMetadataFiles);
+	}
+
+	private void removeStaleMetadata(File[] shelfDirFiles) {
+		Set<String> filenames = Arrays.stream(shelfDirFiles).map(File::getName).collect(Collectors.toSet());
+		metadata.keySet().removeIf((s) -> !filenames.contains(s));
 	}
 
 	public Map<String, MovieMetadata> getAllMetadata() {
@@ -94,6 +119,20 @@ public class MetadataManager {
 
 	public void addMetadata(String filename, MovieMetadata data) {
 		metadata.put(filename, data);
+	}
+
+	private static boolean isOlderThanOneYear(long pastTimestampMillis) {
+		long timeDifferenceMillis = System.currentTimeMillis() - pastTimestampMillis;
+		long oneYearMillis = 365L * 24 * 60 * 60 * 1000; // Approximation, doesn't account for leap years
+
+		return timeDifferenceMillis > oneYearMillis;
+	}
+
+	// asynchronously populate data for all the movies, update existing metadata
+	// entries
+	private void downloadMetadata(List<String> filenames) {
+		System.out.println(filenames);
+		networkHandler.downloadMovies(metadata, filenames);
 	}
 
 }

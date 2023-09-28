@@ -45,11 +45,8 @@ public class MoviePane extends Pane implements Comparable<MoviePane> {
 
 	@FXML
 	public void initialize() {
-		Image image = new Image("file:images/photo.JPG");
+		Image image = new Image(metadata.getImagePath());
 		imageView.setImage(image);
-
-		// set elements to their metadata values
-		// tmpButton.setText(metadata.getTitle());
 
 		moviePane.setOnMouseEntered(event -> {
 			PauseTransition delay = new PauseTransition(Duration.seconds(.75));

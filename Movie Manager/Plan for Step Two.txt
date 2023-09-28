@@ -46,7 +46,6 @@ Local storage (located in movie dir):
 
 Up next:
 	- link UI to metadata
-		- load file names from shelf folder in metadata manager
 		- finish implementing popup
 		- add handling for changing shelf dir
 		- look for images "movieId.jpg" in the metadata folder
@@ -70,7 +69,10 @@ Add in the future?
 	- prompt the user to load backup SER file if index fails to load
 	- path validation
 	- file manager option to move movie into shelf dir
-	- file tags ("to watch")
+	- file tags ("to watch", "No Metadata", "New" tag that expires after 3mo, 720p?)
+	- support for series
+	- clean out metadata that doesn't match current file set
+	- add support for bad result parsing from DB (wrong metadata)
 		
 		
 		
