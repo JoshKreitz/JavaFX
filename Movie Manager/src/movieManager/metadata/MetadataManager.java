@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -78,7 +79,7 @@ public class MetadataManager {
 	// load all the file names from the shelf directory
 	private void loadFiles() {
 		Set<String> existingMetadataFiles = metadata.keySet();
-		List<String> missingMetadataFiles = new ArrayList<String>();
+		Set<String> missingMetadataFiles = new HashSet<String>();
 
 		File[] shelfDirFiles = new File(config.getShelfDir()).listFiles();
 
@@ -90,7 +91,11 @@ public class MetadataManager {
 			String filename = f.getName();
 			if (filename.endsWith(".srt"))
 				continue;
-			else if (!existingMetadataFiles.contains(filename)
+			
+			// remove file extension
+			filename = filename.substring(0, filename.lastIndexOf(".")).trim();
+			
+			if (!existingMetadataFiles.contains(filename)
 					|| isOlderThanOneYear(metadata.get(filename).getMetadataCreationDate())
 					|| metadata.get(filename).isDefault()) {
 				metadata.remove(filename);
@@ -130,7 +135,7 @@ public class MetadataManager {
 
 	// asynchronously populate data for all the movies, update existing metadata
 	// entries
-	private void downloadMetadata(List<String> filenames) {
+	private void downloadMetadata(Set<String> filenames) {
 		System.out.println(filenames);
 		networkHandler.downloadMovies(metadata, filenames);
 	}
