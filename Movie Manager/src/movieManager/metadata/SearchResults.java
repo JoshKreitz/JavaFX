@@ -2,6 +2,9 @@ package movieManager.metadata;
 
 import java.util.List;
 
+/**
+ * A simple bean to parse the JSON response returned from a query to the movie API
+ */
 public class SearchResults {
 	int page;
 	int total_results;

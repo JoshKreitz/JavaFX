@@ -17,7 +17,15 @@ import javafx.stage.Popup;
 import javafx.util.Duration;
 import movieManager.metadata.MovieMetadata;
 
+/**
+ * A custom UI element to display a single movie based on it's metadata,
+ * including a dynamically populated sub-pane to be displayed when the mouse is
+ * hovering over the movie.
+ */
 public class MoviePane extends Pane implements Comparable<MoviePane> {
+	/**
+	 * UI ELEMENTS
+	 */
 
 	@FXML private Pane moviePane;
 	@FXML private ImageView imageView;
@@ -27,8 +35,19 @@ public class MoviePane extends Pane implements Comparable<MoviePane> {
 
 	@FXML private Button tmpButton; // TODO remove
 
+	/**
+	 * LOCAL VARIABLES
+	 */
+
+	// the metadata object for this MoviePane, which can be accessed via the FXML as well
 	private MovieMetadata metadata;
 
+	/**
+	 * Create the element and explicitly define this class as it's controller and
+	 * root.
+	 * 
+	 * @param metadata
+	 */
 	public MoviePane(MovieMetadata metadata) {
 		this.metadata = metadata;
 
@@ -43,6 +62,10 @@ public class MoviePane extends Pane implements Comparable<MoviePane> {
 		}
 	}
 
+	/**
+	 * Load the image to display, and configure the popup to appear on specific
+	 * mouse events.
+	 */
 	@FXML
 	public void initialize() {
 		Image image = new Image(metadata.getImagePath());
@@ -89,6 +112,9 @@ public class MoviePane extends Pane implements Comparable<MoviePane> {
 		return metadata;
 	}
 
+	/**
+	 * Compare MoviePanes, sorted by title first and release date second
+	 */
 	@Override
 	public int compareTo(MoviePane o) {
 		int titleCmp = metadata.getTitle().compareTo(o.getMetadata().getTitle());

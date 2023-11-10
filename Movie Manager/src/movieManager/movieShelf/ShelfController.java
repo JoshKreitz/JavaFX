@@ -19,17 +19,28 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.layout.FlowPane;
-import movieManager.ConfigFile;
+import movieManager.config.ConfigFile;
 import movieManager.metadata.MetadataManager;
 import movieManager.metadata.MovieMetadata;
 import movieManager.metadata.NetworkHandler;
 
+/**
+ * The controller for the Shelf, a graphic movie display that populates and
+ * caches metadata
+ */
 public class ShelfController implements Initializable {
+	/**
+	 * UI ELEMENTS
+	 */
 
 	@FXML private FlowPane flowPane;
 
 	@FXML private Label loadingLabel;
 	@FXML private ProgressIndicator loadingSpinner;
+
+	/**
+	 * LOCAL VARIABLES
+	 */
 
 	private ConfigFile config;
 	private MetadataManager metadataManager;
@@ -41,6 +52,14 @@ public class ShelfController implements Initializable {
 	public void initialize(URL arg0, ResourceBundle arg1) {
 	}
 
+	/**
+	 * Establish references to core application handlers and begin the flow to load
+	 * metadata
+	 * 
+	 * @param config
+	 * @param metadataManager
+	 * @param networkHandler
+	 */
 	public void initData(ConfigFile config, MetadataManager metadataManager, NetworkHandler networkHandler) {
 		if (this.config != null) {
 			throw new IllegalStateException("ConfigFile can only be initialized once");
@@ -50,7 +69,8 @@ public class ShelfController implements Initializable {
 		this.metadataManager = metadataManager;
 		this.networkHandler = networkHandler;
 
-		// bind the loading stuff so the network handler can control the elements
+		// bind the loading-related UI elements so the network handler can control their
+		// state
 		loadingLabel.textProperty().bind(networkHandler.getLoadingMessageProperty());
 		loadingLabel.visibleProperty().bind(networkHandler.getDisplayLoadingSpinnerProperty());
 		loadingSpinner.visibleProperty().bind(networkHandler.getDisplayLoadingSpinnerProperty());
@@ -58,6 +78,12 @@ public class ShelfController implements Initializable {
 		loadMovies(metadataManager.getAllMetadata());
 	}
 
+	/**
+	 * Create MoviePane UI elements for all of the movies and display them in the
+	 * primary flowPane
+	 * 
+	 * @param metadata A map between filenames and their metadata
+	 */
 	private void loadMovies(Map<String, MovieMetadata> metadata) {
 		moviePanes = new ArrayList<MoviePane>();
 

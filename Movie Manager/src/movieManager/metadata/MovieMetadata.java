@@ -4,30 +4,53 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-// bean-style data class to sum up all the metadata a movie has
+/**
+ * A simple bean-style data class to contain all of the metadata for a single
+ * movie.
+ */
 public class MovieMetadata implements Serializable {
+	// a path to the default photo to be used in the absence of any others
+	private final String DEFAULT_IMAGE_PATH = "images/photo.JPG";
 
+	// a version string to prevent serialization issues when this class is modified
 	private static final long serialVersionUID = 1L;
 
+	// a simple UUID for this movie
 	private int movieId;
+
+	// movie specific details
 	private String title;
 	private String releaseDate;
 	private String description;
 	private String imagePath;
 	private List<String> genres;
 
+	// the specific time, in milliseconds, since this metadata was retrieved
 	private long metadataCreationDate;
 
+	/**
+	 * Create a metadata object with default parameters
+	 */
 	public MovieMetadata() {
 		movieId = -1;
 		title = "Unavailable";
 		releaseDate = "01-01-1970";
 		description = "This movie's data has not been downloaded yet or is unavailable.";
-		imagePath = "file:images/photo.JPG";
+		imagePath = "file:" + DEFAULT_IMAGE_PATH;
 		genres = new ArrayList<String>();
 		metadataCreationDate = System.currentTimeMillis();
 	}
 
+	/**
+	 * Create a metadata object for a specific movie
+	 * 
+	 * @param movieId
+	 * @param title
+	 * @param releaseDate
+	 * @param description
+	 * @param imagePath
+	 * @param genres
+	 */
 	public MovieMetadata(int movieId, String title, String releaseDate, String description, String imagePath,
 			List<String> genres) {
 		this.movieId = movieId;
@@ -95,7 +118,7 @@ public class MovieMetadata implements Serializable {
 	public void setImagePath(String imagePath) {
 		this.imagePath = imagePath;
 	}
-	
+
 	public boolean isDefault() {
 		return this.equals(new MovieMetadata());
 	}

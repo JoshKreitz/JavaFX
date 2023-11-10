@@ -22,6 +22,11 @@ import javafx.util.Duration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+/**
+ * A consolidated handler for all outgoing requests. This class is responsible
+ * for populating metadata from an external movie API, and goes through several
+ * simple flows to retrieve the desired data
+ */
 public class NetworkHandler {
 
 	/*
@@ -31,28 +36,41 @@ public class NetworkHandler {
 	 * hopefully UI updates?
 	 * 
 	 * 
-	 * It's now sending requests out and getting responses, but a few problems with the metadata:
-	 * 		- filenames still contain file types
-	 * 		- list contains duplicates
+	 * It's now sending requests out and getting responses, but a few problems with
+	 * the metadata: - filenames still contain file types - list contains duplicates
 	 */
 
-	Map<String, MovieMetadata> metadata;
-
-	private BooleanProperty displayLoadingSpinnerProperty = new SimpleBooleanProperty(true);
-	private StringProperty loadingMessageProperty = new SimpleStringProperty("default");
-	
+	// movie search URL for the movie DB API
 	private final String DB_URL = "https://api.themoviedb.org/3/search/movie";
+	// an api_key generously donated by some dumb mf online
 	private final String API_KEY = "15d2ea6d0dc1d476efbca3eba2b9bbfb";
 
+	// the current movie metadata map
+	Map<String, MovieMetadata> metadata;
+
+	// properties bound to network-status UI elements on the Shelf page
+	private BooleanProperty displayLoadingSpinnerProperty = new SimpleBooleanProperty(true);
+	private StringProperty loadingMessageProperty = new SimpleStringProperty("default");
+
+	// a mapper used to parse the JSON responses from the API
 	static final ObjectMapper mapper = new ObjectMapper();
 
 	public NetworkHandler() {
 	}
 
+	/**
+	 * Download metadata for the provided filenames and update it in the metadata
+	 * map
+	 * 
+	 * @param metadata  The core metadata map to be updated
+	 * @param filenames The files to be searched and downloaded
+	 */
 	public void downloadMovies(Map<String, MovieMetadata> metadata, Set<String> filenames) {
 		this.metadata = metadata;
 
 		filenames.stream().map(Movie::new).forEach(this::downloadMovie);
+
+		// TODO add UI element controls
 		loadingMessageProperty.set("TEST TEST");
 
 		// TODO REMOVE
@@ -70,19 +88,34 @@ public class NetworkHandler {
 		delay2.playFromStart();
 	}
 
+	/**
+	 * Download the metadata for a single movie
+	 * 
+	 * @param movie
+	 */
 	private void downloadMovie(Movie movie) {
-		String url = String.format("%s?api_key=%s&query=%s", DB_URL, API_KEY, URLEncoder.encode(movie.title, StandardCharsets.UTF_8));
-		
+		// form the search query URL
+		String url = String.format("%s?api_key=%s&query=%s", DB_URL, API_KEY,
+				URLEncoder.encode(movie.title, StandardCharsets.UTF_8));
+
+		// asynchronously send out the request
 		CompletableFuture.runAsync(() -> {
 			try {
 				System.out.println("Making call for " + movie.title);
 				makeAPICall(url);
+
 			} catch (IOException e) {
 				System.out.println("Error making API call to " + url + ": " + e.getMessage());
 			}
 		});
 	}
 
+	/**
+	 * Make a single API call to the desired URL
+	 * 
+	 * @param urlString The target URL
+	 * @throws IOException if the connection fucks off for whatever reason
+	 */
 	private static void makeAPICall(String urlString) throws IOException {
 		URL url = new URL(urlString);
 		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -94,13 +127,13 @@ public class NetworkHandler {
 			int responseCode = connection.getResponseCode();
 
 			if (responseCode == HttpURLConnection.HTTP_OK) { // Success
-			
+
 				InputStream is = connection.getInputStream();
 
 				BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
 				StringBuilder builder = new StringBuilder();
 				for (String line = null; (line = reader.readLine()) != null;) {
-				    //builder.append(line).append("\n");
+					// builder.append(line).append("\n");
 					System.out.println(line);
 
 //					System.out.println("before");
@@ -111,28 +144,26 @@ public class NetworkHandler {
 //					//Map<String, String> map = mapper.readValue(json, new TypeReference<Map<String, String>>(){});
 //
 //					map.forEach((k, v) -> System.out.format("[key]:%s \t[value]:%s\n", k, v));
-					
+
 					try {
 						System.out.println("trying to parse");
-			            SearchResults results = mapper.readValue(line, SearchResults.class);
+						SearchResults results = mapper.readValue(line, SearchResults.class);
 
-			            // compact print
-			            System.out.println("\t" + urlString + " => NUMBER OF RESULTS: " + results.getResults().size());
+						// compact print
+						System.out.println("\t" + urlString + " => NUMBER OF RESULTS: " + results.getResults().size());
 
-			            // pretty print
-			            //String prettyStaff1 = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(results);
-			            //System.out.println("\t" + prettyStaff1);
+						// pretty print
+						// String prettyStaff1 =
+						// mapper.writerWithDefaultPrettyPrinter().writeValueAsString(results);
+						// System.out.println("\t" + prettyStaff1);
 
-
-			        } catch (IOException e) {
+					} catch (IOException e) {
 						System.out.println("shit failed");
-			            e.printStackTrace();
-			        }
-					
-					
-					
+						e.printStackTrace();
+					}
+
 				}
-				
+
 				is.close();
 			} else {
 				System.out.println("Failed API call for URL: " + urlString + ". Response code: " + responseCode);
@@ -142,6 +173,12 @@ public class NetworkHandler {
 		}
 	}
 
+	/**
+	 * A simple object to parse a filename and keep the extracted title associated
+	 * with it's release date year. This assumes the filename follows the syntax "V
+	 * for Vendetta (2006) 720p" where either or both of the year/resolution may be
+	 * absent.
+	 */
 	private class Movie {
 		public String title;
 		public String year;
@@ -170,7 +207,7 @@ public class NetworkHandler {
 			}
 		}
 	}
-	
+
 	public BooleanProperty getDisplayLoadingSpinnerProperty() {
 		return displayLoadingSpinnerProperty;
 	}

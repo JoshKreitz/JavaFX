@@ -56,6 +56,8 @@ Up next:
 		- Now I gotta narrow search results, handle results, download images
 		- more search parameters in the API?
 	- bug: years not working yet
+	- add buttons to open files in VLC
+	- detect if shelf dir changes in config and reload metadata
 
 
 		

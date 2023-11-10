@@ -5,34 +5,24 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-@JsonIgnoreProperties({"popularity", "video", "vote_average", "vote_count"})
+/**
+ * A simple bean to parse a single movie result from the JSON response returned
+ * by a query to the movie API
+ */
+@JsonIgnoreProperties({ "popularity", "video", "vote_average", "vote_count" })
 public class SearchMovie {
-	
+
 	/*
-{
-      "adult": false,
-      "backdrop_path": "/2WgieNR1tGHlpJUsolbVzbUbE1O.jpg",
-      "genre_ids": [
-        10752,
-        28,
-        18
-      ],
-      "id": 530915,
-      "original_language": "en",
-      "original_title": "1917",
-      "overview": "At the height of the First World War, two young British soldiers must cross enemy territory and deliver a message that will stop a deadly attack on hundreds of soldiers.",
-      "popularity": 39.792,
-      "poster_path": "/iZf0KyrE25z1sage4SYFLCCrMi9.jpg",
-      "release_date": "2019-12-25",
-      "title": "1917",
-      "video": false,
-      "vote_average": 7.991,
-      "vote_count": 11471
-    }
+	 * { "adult": false, "backdrop_path": "/2WgieNR1tGHlpJUsolbVzbUbE1O.jpg",
+	 * "genre_ids": [ 10752, 28, 18 ], "id": 530915, "original_language": "en",
+	 * "original_title": "1917", "overview":
+	 * "At the height of the First World War, two young British soldiers must cross enemy territory and deliver a message that will stop a deadly attack on hundreds of soldiers."
+	 * , "popularity": 39.792, "poster_path": "/iZf0KyrE25z1sage4SYFLCCrMi9.jpg",
+	 * "release_date": "2019-12-25", "title": "1917", "video": false,
+	 * "vote_average": 7.991, "vote_count": 11471 }
 	 */
-	
-	@JsonProperty("id")
-	private String id;
+
+	@JsonProperty("id") private String id;
 	String backdrop_path;
 	String poster_path;
 	List<Integer> genre_ids;

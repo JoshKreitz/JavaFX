@@ -13,6 +13,7 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TabPane.TabClosingPolicy;
 import javafx.stage.Stage;
 import movieManager.config.ConfigController;
+import movieManager.config.ConfigFile;
 import movieManager.fileManager.FileManagerController;
 import movieManager.metadata.MetadataManager;
 import movieManager.metadata.MovieMetadata;
@@ -20,16 +21,35 @@ import movieManager.metadata.NetworkHandler;
 import movieManager.movieShelf.MoviePane;
 import movieManager.movieShelf.ShelfController;
 
+/*
+ * This is the entry point of the application. This class establishes the root JavaFX Stage containing the top level tabs, and provides
+ * those tabs with references to any configuration entities that must be shared between them. 
+ */
 public class Main extends Application {
+	// The top level pane that holds the main page tabs
 	TabPane root;
+
+	// The core settings for the application, read from the application's config
+	// file and supplied to the various tabs
 	ConfigFile config;
+
+	// The core movie metadata, read from a previous cache or downloaded from the
+	// internet
 	MetadataManager metadataManager;
+
+	// The core network handler, which takes care of all external network calls
 	NetworkHandler networkHandler;
 
 	public static void main(String[] args) {
 		launch(args);
 	}
 
+	/**
+	 * This callback is activated when the the JavaFX application is initialized and
+	 * establishes the entire application
+	 * 
+	 * @param primaryStage the root JavaFX Stage
+	 */
 	@Override
 	public void start(Stage primaryStage) throws IOException {
 		root = new TabPane();
@@ -53,6 +73,12 @@ public class Main extends Application {
 		primaryStage.show();
 	}
 
+	/**
+	 * Initialize the tab pages and provide them references to any shared entities.
+	 * This function also adds a listener to detect tab changes.
+	 * 
+	 * @throws IOException if the tab classes fail to load
+	 */
 	private void loadTabs() throws IOException {
 		List<Tab> tabs = root.getTabs();
 
