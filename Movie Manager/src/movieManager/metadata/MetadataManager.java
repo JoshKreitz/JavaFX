@@ -130,7 +130,31 @@ public class MetadataManager {
 		removeUnassociatedMetadata(shelfDirFiles);
 
 		// asynchronously populate data for the selected movies
-		networkHandler.downloadMovies(metadata, missingMetadataFiles);
+		downloadMovies(missingMetadataFiles);
+	}
+
+	/**
+	 * Begin the request flow to download metadata for all requested movies
+	 * 
+	 * @param filenames the filenames for movies that need metadata downloaded
+	 */
+	private void downloadMovies(Set<String> filenames) {
+		filenames.stream().map(MovieFile::new)
+				.forEach(movie -> NetworkHandler.downloadMovie(movie, MetadataManager::handleSearchResults));
+	}
+
+	/**
+	 * A callback function to handle search results for a movie. If exactly 1 result
+	 * is found, that metadata will be used. If no results were found, this function
+	 * will attempt to broaden the search by removing the release year, otherwise
+	 * the movie will display only default place holders. If more than one result is
+	 * found, then the most popular result will be used.
+	 * 
+	 * @param movie The movie that was searched
+	 * @param results The API search results
+	 */
+	public static void handleSearchResults(MovieFile movie, SearchResults results) {
+		System.out.println(movie.title + " ==> " + results.getTotal_results());
 	}
 
 	/**

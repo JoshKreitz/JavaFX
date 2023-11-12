@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -12,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 import javafx.animation.PauseTransition;
 import javafx.beans.property.BooleanProperty;
@@ -41,12 +44,9 @@ public class NetworkHandler {
 	 */
 
 	// movie search URL for the movie DB API
-	private final String DB_URL = "https://api.themoviedb.org/3/search/movie";
+	private static final String DB_URL = "https://api.themoviedb.org/3/search/movie";
 	// an api_key generously donated by some dumb mf online
-	private final String API_KEY = "15d2ea6d0dc1d476efbca3eba2b9bbfb";
-
-	// the current movie metadata map
-	Map<String, MovieMetadata> metadata;
+	private static final String API_KEY = "15d2ea6d0dc1d476efbca3eba2b9bbfb";
 
 	// properties bound to network-status UI elements on the Shelf page
 	private BooleanProperty displayLoadingSpinnerProperty = new SimpleBooleanProperty(true);
@@ -65,10 +65,9 @@ public class NetworkHandler {
 	 * @param metadata  The core metadata map to be updated
 	 * @param filenames The files to be searched and downloaded
 	 */
+	@Deprecated
+	// TODO remove
 	public void downloadMovies(Map<String, MovieMetadata> metadata, Set<String> filenames) {
-		this.metadata = metadata;
-
-		filenames.stream().map(Movie::new).forEach(this::downloadMovie);
 
 		// TODO add UI element controls
 		loadingMessageProperty.set("TEST TEST");
@@ -93,119 +92,85 @@ public class NetworkHandler {
 	 * 
 	 * @param movie
 	 */
-	private void downloadMovie(Movie movie) {
+	public static void downloadMovie(MovieFile movie, BiConsumer<MovieFile, SearchResults> callback) {
 		// form the search query URL
 		String url = String.format("%s?api_key=%s&query=%s", DB_URL, API_KEY,
-				URLEncoder.encode(movie.title, StandardCharsets.UTF_8));
+				URLEncoder.encode(movie.title, StandardCharsets.UTF_8))
+				+ (!movie.year.isEmpty() ? "&year=" + URLEncoder.encode(movie.year, StandardCharsets.UTF_8) : "");
 
 		// asynchronously send out the request
 		CompletableFuture.runAsync(() -> {
-			try {
-				System.out.println("Making call for " + movie.title);
-				makeAPICall(url);
-
-			} catch (IOException e) {
-				System.out.println("Error making API call to " + url + ": " + e.getMessage());
+			System.out.println("Making call for \"" + movie.title + "\" with year \"" + movie.year + "\"");
+			HttpURLConnection connection = openConnection(url);
+			if (connection != null) {
+				SearchResults results = parseSearchResults(url, connection);
+				connection.disconnect();
+				callback.accept(movie, results);
 			}
+			// TODO do I need a failure callback? retry requests or anything? update UI?
 		});
 	}
 
 	/**
-	 * Make a single API call to the desired URL
+	 * Parse the Search Results from the request JSON
 	 * 
-	 * @param urlString The target URL
-	 * @throws IOException if the connection fucks off for whatever reason
+	 * @param urlString  the URL used to fetch the response
+	 * @param connection the connection to the API
+	 * @return a parsed SearchResults object, or null if any errors occurred
 	 */
-	private static void makeAPICall(String urlString) throws IOException {
-		URL url = new URL(urlString);
-		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
+	private static SearchResults parseSearchResults(String urlString, HttpURLConnection connection) {
 		try {
-			connection.setRequestMethod("GET");
-			connection.setRequestProperty("User-Agent", "Mozilla/5.0");
-
 			int responseCode = connection.getResponseCode();
 
 			if (responseCode == HttpURLConnection.HTTP_OK) { // Success
+				try (InputStream is = connection.getInputStream()) {
+					BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+					SearchResults results = mapper.readValue(reader.readLine(), SearchResults.class);
 
-				InputStream is = connection.getInputStream();
+					// compact print
+					// TODO remove
+					System.out.println("\t" + urlString.substring(urlString.indexOf("&")) + " => NUMBER OF RESULTS: "
+							+ results.getResults().size());
 
-				BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-				StringBuilder builder = new StringBuilder();
-				for (String line = null; (line = reader.readLine()) != null;) {
-					// builder.append(line).append("\n");
-					System.out.println(line);
+					// pretty print
+					// String prettyStaff1 =
+					// mapper.writerWithDefaultPrettyPrinter().writeValueAsString(results);
+					// System.out.println("\t" + prettyStaff1);
 
-//					System.out.println("before");
-//					System.out.println("after");
-//					Map<String, String> map = mapper.readValue(json, Map.class);
-//					
-//					// or like this:
-//					//Map<String, String> map = mapper.readValue(json, new TypeReference<Map<String, String>>(){});
-//
-//					map.forEach((k, v) -> System.out.format("[key]:%s \t[value]:%s\n", k, v));
-
-					try {
-						System.out.println("trying to parse");
-						SearchResults results = mapper.readValue(line, SearchResults.class);
-
-						// compact print
-						System.out.println("\t" + urlString + " => NUMBER OF RESULTS: " + results.getResults().size());
-
-						// pretty print
-						// String prettyStaff1 =
-						// mapper.writerWithDefaultPrettyPrinter().writeValueAsString(results);
-						// System.out.println("\t" + prettyStaff1);
-
-					} catch (IOException e) {
-						System.out.println("shit failed");
-						e.printStackTrace();
-					}
-
+					return results;
 				}
-
-				is.close();
 			} else {
 				System.out.println("Failed API call for URL: " + urlString + ". Response code: " + responseCode);
+				return null;
 			}
-		} finally {
-			connection.disconnect();
+		} catch (IOException e) {
+			System.out.println("Error making API call to " + urlString + ": " + e.getMessage());
+			return null;
 		}
 	}
 
 	/**
-	 * A simple object to parse a filename and keep the extracted title associated
-	 * with it's release date year. This assumes the filename follows the syntax "V
-	 * for Vendetta (2006) 720p" where either or both of the year/resolution may be
-	 * absent.
+	 * Opens a connection to the desired URL, with some basic error handling
+	 * 
+	 * @param urlString The target URL
+	 * @throws IOException if the connection fucks off for whatever reason
 	 */
-	private class Movie {
-		public String title;
-		public String year;
+	private static HttpURLConnection openConnection(String urlString) {
+		HttpURLConnection connection = null;
 
-		// parse out the title and year
-		public Movie(String filename) {
-			// remove trailing "720p" or "1080p"
-			filename.replaceAll("\\s*(\\d{3,4}p)$", "");
+		try {
+			URL url = new URL(urlString);
+			connection = (HttpURLConnection) url.openConnection();
+			connection.setRequestMethod("GET");
+			connection.setRequestProperty("User-Agent", "Mozilla/5.0");
 
-			// parse the date
-			int parenIndex = filename.indexOf('(');
-			int parenEndingIndex;
-			if (parenIndex != -1 && (parenEndingIndex = filename.indexOf(')')) != -1
-					&& parenEndingIndex - parenIndex == 5) {
-				try {
-					String tmp = filename.substring(parenIndex + 1, parenEndingIndex);
-					Integer.parseInt(tmp);
-					year = tmp;
-				} catch (NumberFormatException e) {
-				}
-
-				title = filename.substring(0, parenIndex).trim();
-			} else {
-				year = "";
-				title = filename;
-			}
+			return connection;
+		} catch (MalformedURLException e) {
+			System.out.println("Failed to create URL " + urlString + ": " + e.getMessage());
+		} catch (IOException e) {
+			System.out.println("Error making API call to " + urlString + ": " + e.getMessage());
 		}
+		return null;
 	}
 
 	public BooleanProperty getDisplayLoadingSpinnerProperty() {

@@ -55,9 +55,20 @@ Up next:
 	- status: making requests, parsing into classes.
 		- Now I gotta narrow search results, handle results, download images
 		- more search parameters in the API?
-	- bug: years not working yet
 	- add buttons to open files in VLC
 	- detect if shelf dir changes in config and reload metadata
+	
+Network request response flow:
+	- First request for movie, get list of results:
+		- 0 results:
+			- year field:
+				- clear the year field and re-request
+			- no year field:
+				- no data, display placeholders
+		- 1 result:
+			- great, display data
+		- >1 result:
+			- download and display the most popular, give option to change?
 
 
 		
