@@ -3,6 +3,7 @@ package movieManager.metadata;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -23,7 +24,7 @@ public class MetadataManager {
 	private final String METADATA_FOLDER_NAME = ".MovieManagerMetadata";
 
 	// the core metadata map from filename -> metadata
-	private Map<String, MovieMetadata> metadata;
+	private static Map<String, MovieMetadata> metadata;
 
 	// references to core entities
 	private ConfigFile config;
@@ -150,11 +151,61 @@ public class MetadataManager {
 	 * the movie will display only default place holders. If more than one result is
 	 * found, then the most popular result will be used.
 	 * 
-	 * @param movie The movie that was searched
-	 * @param results The API search results
+	 * @param movie         The movie that was searched
+	 * @param searchResults The API search results
 	 */
-	public static void handleSearchResults(MovieFile movie, SearchResults results) {
-		System.out.println(movie.title + " ==> " + results.getTotal_results());
+	public static void handleSearchResults(MovieFile movie, SearchResults searchResults) {
+		int totalResults = searchResults.getTotal_results();
+		// no API results were returned
+		if (totalResults == 0) {
+			// if the movie has a year, remove it and try to fetch it again
+			if (movie.hasYear()) {
+				movie.removeYear();
+				NetworkHandler.downloadMovie(movie, MetadataManager::handleSearchResults);
+			}
+		} else {
+			List<SearchMovie> results = searchResults.getResults();
+
+			// sort results by popularity if there are more than one
+			if (results.size() > 1) {
+				results.sort(new Comparator<SearchMovie>() {
+					@Override
+					public int compare(SearchMovie o1, SearchMovie o2) {
+						if (o1 == null)
+							return 1;
+						if (o2 == null)
+							return -1;
+						if (o1 == o2)
+							return 0;
+
+						double o1pop = o1.getPopularity();
+						double o2pop = o2.getPopularity();
+						if (o1pop < o2pop)
+							return -1;
+						if (o1pop > o2pop)
+							return 1;
+
+						return o1.getTitle().compareTo(o2.getTitle());
+					}
+				});
+			}
+
+			setMetadata(movie, results.get(0));
+
+			// TODO kick off flow to download the image;
+		}
+	}
+
+	/**
+	 * Set the metadata for a single movie based on the fetched result
+	 * 
+	 * @param movie  The movie file for which the metadata will be updated
+	 * @param result The metadata returned by the API
+	 */
+	private static void setMetadata(MovieFile movie, SearchMovie result) {
+		MovieMetadata final_metadata = new MovieMetadata(result.getId(), result.getTitle(), result.getRelease_date(),
+				result.getOverview(), "", null);
+		metadata.put(movie.getFilename(), final_metadata);
 	}
 
 	/**

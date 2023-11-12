@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * A simple bean to parse a single movie result from the JSON response returned
  * by a query to the movie API
  */
-@JsonIgnoreProperties({ "popularity", "video", "vote_average", "vote_count" })
+@JsonIgnoreProperties({ "video", "vote_average", "vote_count" })
 public class SearchMovie {
 
 	/*
@@ -22,7 +22,7 @@ public class SearchMovie {
 	 * "vote_average": 7.991, "vote_count": 11471 }
 	 */
 
-	@JsonProperty("id") private String id;
+	private int id;
 	String backdrop_path;
 	String poster_path;
 	List<Integer> genre_ids;
@@ -32,15 +32,16 @@ public class SearchMovie {
 	String overview;
 	boolean adult;
 	String release_date;
+	double popularity;
 
 	public SearchMovie() {
 	}
 
-	public String getId() {
+	public int getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 
@@ -114,6 +115,14 @@ public class SearchMovie {
 
 	public void setRelease_date(String release_date) {
 		this.release_date = release_date;
+	}
+
+	public double getPopularity() {
+		return popularity;
+	}
+
+	public void setPopularity(double popularity) {
+		this.popularity = popularity;
 	}
 
 }

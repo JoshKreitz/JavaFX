@@ -7,11 +7,14 @@ package movieManager.metadata;
  * absent.
  */
 public class MovieFile {
-	public String title;
-	public String year;
+	private String filename;
+	private String title;
+	private String year;
 
 	// parse out the title and year
 	public MovieFile(String filename) {
+		this.filename = filename;
+
 		// remove trailing "720p" or "1080p"
 		filename = filename.replaceAll("\\s*(\\d{3,4}p)$", "");
 
@@ -32,8 +35,37 @@ public class MovieFile {
 			year = "";
 			title = filename;
 		}
+	}
 
-		// System.out.println("FILENAME PARSE input: '" + filename + "', output: '" +
-		// title + "'");
+	public boolean hasYear() {
+		return !year.isEmpty();
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public String getYear() {
+		return year;
+	}
+
+	public void setYear(String year) {
+		this.year = year;
+	}
+
+	public void removeYear() {
+		this.year = "";
+	}
+
+	public String getFilename() {
+		return filename;
+	}
+
+	public void setFilename(String filename) {
+		this.filename = filename;
 	}
 }

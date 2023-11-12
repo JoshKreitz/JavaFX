@@ -95,12 +95,12 @@ public class NetworkHandler {
 	public static void downloadMovie(MovieFile movie, BiConsumer<MovieFile, SearchResults> callback) {
 		// form the search query URL
 		String url = String.format("%s?api_key=%s&query=%s", DB_URL, API_KEY,
-				URLEncoder.encode(movie.title, StandardCharsets.UTF_8))
-				+ (!movie.year.isEmpty() ? "&year=" + URLEncoder.encode(movie.year, StandardCharsets.UTF_8) : "");
+				URLEncoder.encode(movie.getTitle(), StandardCharsets.UTF_8))
+				+ (movie.hasYear() ? "&year=" + URLEncoder.encode(movie.getYear(), StandardCharsets.UTF_8) : "");
 
 		// asynchronously send out the request
 		CompletableFuture.runAsync(() -> {
-			System.out.println("Making call for \"" + movie.title + "\" with year \"" + movie.year + "\"");
+			System.out.println("Making call for \"" + movie.getTitle() + "\" with year \"" + movie.getYear() + "\"");
 			HttpURLConnection connection = openConnection(url);
 			if (connection != null) {
 				SearchResults results = parseSearchResults(url, connection);
