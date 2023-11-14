@@ -92,7 +92,7 @@ public class NetworkHandler {
 	 * 
 	 * @param movie
 	 */
-	public static void downloadMovie(MovieFile movie, BiConsumer<MovieFile, SearchResults> callback) {
+	public static void downloadMovie(MovieFile movie, MetadataManager manager) {
 		// form the search query URL
 		String url = String.format("%s?api_key=%s&query=%s", DB_URL, API_KEY,
 				URLEncoder.encode(movie.getTitle(), StandardCharsets.UTF_8))
@@ -105,7 +105,8 @@ public class NetworkHandler {
 			if (connection != null) {
 				SearchResults results = parseSearchResults(url, connection);
 				connection.disconnect();
-				callback.accept(movie, results);
+				System.out.println("Got results, calling handler: " + results);
+				manager.handleSearchResults(movie, results);
 			}
 			// TODO do I need a failure callback? retry requests or anything? update UI?
 		});

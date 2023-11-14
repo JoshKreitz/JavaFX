@@ -4,6 +4,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -46,7 +47,7 @@ public class ShelfController implements Initializable {
 	private MetadataManager metadataManager;
 	private NetworkHandler networkHandler;
 
-	private List<MoviePane> moviePanes;
+	private Map<String, MoviePane> moviePanes;
 
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
@@ -75,7 +76,7 @@ public class ShelfController implements Initializable {
 		loadingLabel.visibleProperty().bind(networkHandler.getDisplayLoadingSpinnerProperty());
 		loadingSpinner.visibleProperty().bind(networkHandler.getDisplayLoadingSpinnerProperty());
 
-		loadMovies(metadataManager.getAllMetadata());
+		initializeMovies();
 	}
 
 	/**
@@ -84,23 +85,32 @@ public class ShelfController implements Initializable {
 	 * 
 	 * @param metadata A map between filenames and their metadata
 	 */
-	private void loadMovies(Map<String, MovieMetadata> metadata) {
-		moviePanes = new ArrayList<MoviePane>();
+	private void initializeMovies() {
+		Map<String, MovieMetadata> metadata = metadataManager.getAllMetadata();
+		moviePanes = new HashMap<String, MoviePane>();
 
-		// create all the moviepanes
+		// create all the movie panes
 		for (String key : metadata.keySet()) {
 			MovieMetadata meta = metadata.get(key);
-			moviePanes.add(new MoviePane(meta));
+			moviePanes.put(key, new MoviePane(meta));
 		}
 
+		//TODO remove
 		// sort em using compareTo in MoviePane
-		Collections.sort(moviePanes);
+		//Collections.sort(moviePanes);
 
-		// add em to the flowpane
+		// add em to the flow pane
 		ObservableList<Node> children = flowPane.getChildren();
-		for (MoviePane p : moviePanes) {
-			children.add(p);
-		}
+		
+		moviePanes.entrySet().stream().sorted(Map.Entry.comparingByValue()).forEach(pane -> children.add(pane.getValue()));;
+//		for (MoviePane p : moviePanes) {
+//			children.add(p);
+//		}
 	}
-
+	
+	public void updateMoviePaneMetadata(String filename, MovieMetadata data) {
+		System.out.println("Updating metadata for file \"" + filename + "\" with data: " + data);
+		MoviePane selectedPane = moviePanes.get(filename);
+		selectedPane.setMetadata(data);
+	}
 }

@@ -3,7 +3,8 @@ package movieManager.metadata;
 import java.util.List;
 
 /**
- * A simple bean to parse the JSON response returned from a query to the movie API
+ * A simple bean to parse the JSON response returned from a query to the movie
+ * API
  */
 public class SearchResults {
 	int page;
@@ -46,4 +47,9 @@ public class SearchResults {
 		this.results = results;
 	}
 
+	@Override
+	public String toString() {
+		return String.format("SearchResults[page=%d,total_results=%d,total_pages=%d,results.size=%d]", page,
+				total_results, total_pages, results.size());
+	}
 }

@@ -86,6 +86,7 @@ public class Main extends Application {
 		Tab shelfTab = new Tab("Shelf", shelfLoader.load());
 		ShelfController shelfController = shelfLoader.getController();
 		shelfController.initData(config, metadataManager, networkHandler);
+		metadataManager.setShelfController(shelfController);
 		tabs.add(shelfTab);
 
 		FXMLLoader fileManagerLoader = new FXMLLoader(getClass().getResource("fileManager/FileManager.fxml"));

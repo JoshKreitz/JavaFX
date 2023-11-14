@@ -108,6 +108,10 @@ public class MoviePane extends Pane implements Comparable<MoviePane> {
 
 	}
 
+	public void setMetadata(MovieMetadata metadata) {
+		this.metadata = metadata;
+	}
+	
 	public MovieMetadata getMetadata() {
 		return metadata;
 	}

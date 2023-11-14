@@ -69,6 +69,13 @@ Network request response flow:
 			- great, display data
 		- >1 result:
 			- download and display the most popular, give option to change?
+			
+			
+Got data into metadata variable, now need to update the UI MoviePanes
+	- original thinking, have a function to reset, but requires giving metadatamanager a reference to shelfcontroller
+		- wont work because of statics
+	- Could make it a MapProperty???
+	- Find a way to have the callbacks not be static?? maybe I can pass the metadata manager to the network controller so it can update the shit 
 
 
 		
@@ -92,6 +99,7 @@ Add in the future?
 	- support for series
 	- clean out metadata that doesn't match current file set
 	- add support for bad result parsing from DB (wrong metadata)
+	- refresh shelf button to pick up newly added files
 		
 		
 		

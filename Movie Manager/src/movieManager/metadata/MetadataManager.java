@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import movieManager.config.ConfigFile;
+import movieManager.movieShelf.ShelfController;
 
 /**
  * A key component to handle the core metadata map. This class controls the
@@ -24,12 +25,14 @@ public class MetadataManager {
 	private final String METADATA_FOLDER_NAME = ".MovieManagerMetadata";
 
 	// the core metadata map from filename -> metadata
-	private static Map<String, MovieMetadata> metadata;
+	private Map<String, MovieMetadata> metadata;
 
 	// references to core entities
 	private ConfigFile config;
 	private Serializer<String, MovieMetadata> serializer;
 	private NetworkHandler networkHandler;
+
+	private ShelfController shelfController = null;
 
 	/**
 	 * Establish references and attempt to load the metadata from the filesystem
@@ -140,8 +143,7 @@ public class MetadataManager {
 	 * @param filenames the filenames for movies that need metadata downloaded
 	 */
 	private void downloadMovies(Set<String> filenames) {
-		filenames.stream().map(MovieFile::new)
-				.forEach(movie -> NetworkHandler.downloadMovie(movie, MetadataManager::handleSearchResults));
+		filenames.stream().map(MovieFile::new).forEach(movie -> NetworkHandler.downloadMovie(movie, this));
 	}
 
 	/**
@@ -154,16 +156,19 @@ public class MetadataManager {
 	 * @param movie         The movie that was searched
 	 * @param searchResults The API search results
 	 */
-	public static void handleSearchResults(MovieFile movie, SearchResults searchResults) {
+	public void handleSearchResults(MovieFile movie, SearchResults searchResults) {
 		int totalResults = searchResults.getTotal_results();
 		// no API results were returned
 		if (totalResults == 0) {
+			System.out.println("No search results for movie \"" + movie.getFilename() + "\"");
 			// if the movie has a year, remove it and try to fetch it again
 			if (movie.hasYear()) {
+				System.out.println("Reattempting request for movie \"" + movie.getFilename() + "\" without year");
 				movie.removeYear();
-				NetworkHandler.downloadMovie(movie, MetadataManager::handleSearchResults);
+				NetworkHandler.downloadMovie(movie, this);
 			}
 		} else {
+			System.out.println("more than one result");//TODO remove
 			List<SearchMovie> results = searchResults.getResults();
 
 			// sort results by popularity if there are more than one
@@ -202,10 +207,19 @@ public class MetadataManager {
 	 * @param movie  The movie file for which the metadata will be updated
 	 * @param result The metadata returned by the API
 	 */
-	private static void setMetadata(MovieFile movie, SearchMovie result) {
+	private void setMetadata(MovieFile movie, SearchMovie result) {
 		MovieMetadata final_metadata = new MovieMetadata(result.getId(), result.getTitle(), result.getRelease_date(),
-				result.getOverview(), "", null);
-		metadata.put(movie.getFilename(), final_metadata);
+				result.getOverview(), "", new ArrayList<String>());
+		System.out.println("Setting metadata for movie \"" + movie + "\": " + final_metadata);
+
+		String filename = movie.getFilename();
+		metadata.put(filename, final_metadata);
+
+		if (shelfController != null) {
+			shelfController.updateMoviePaneMetadata(filename, final_metadata);
+		} else {
+			throw new IllegalStateException("Attempted to update metadata before controller was initialized");
+		}
 	}
 
 	/**
@@ -252,5 +266,9 @@ public class MetadataManager {
 		long oneYearMillis = 365L * 24 * 60 * 60 * 1000; // Approximation, doesn't account for leap years
 
 		return timeDifferenceMillis > oneYearMillis;
+	}
+
+	public void setShelfController(ShelfController shelfController) {
+		this.shelfController = shelfController;
 	}
 }

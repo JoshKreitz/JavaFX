@@ -125,4 +125,9 @@ public class SearchMovie {
 		this.popularity = popularity;
 	}
 
+	@Override
+	public String toString() {
+		return String.format("SearchMovie[title=%s,release_date=%s]", title, release_date);
+	}
+
 }

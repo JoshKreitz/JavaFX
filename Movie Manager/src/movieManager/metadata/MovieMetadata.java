@@ -125,8 +125,7 @@ public class MovieMetadata implements Serializable {
 
 	@Override
 	public String toString() {
-		return String.format("MovieMetadata[%d,%s,%s,%s,%s]", movieId, title, releaseDate, description,
-				genres.toString());
+		return String.format("MovieMetadata[%d,%s,%s,%s]", movieId, title, releaseDate, genres.toString());
 	}
 
 	@Override
