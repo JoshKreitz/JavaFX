@@ -24,7 +24,7 @@ import javafx.scene.layout.FlowPane;
 import movieManager.config.ConfigFile;
 import movieManager.metadata.MetadataManager;
 import movieManager.metadata.MovieMetadata;
-import movieManager.metadata.NetworkHandler;
+import movieManager.util.NetworkHandler;
 
 /**
  * The controller for the Shelf, a graphic movie display that populates and

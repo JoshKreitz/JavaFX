@@ -8,6 +8,7 @@ import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import movieManager.util.SearchMovie;
 
 /**
  * A simple bean-style data class to contain all of the metadata for a single

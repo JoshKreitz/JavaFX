@@ -43,7 +43,8 @@ public class MoviePane extends Pane implements Comparable<MoviePane> {
 	 * LOCAL VARIABLES
 	 */
 
-	// the metadata object for this MoviePane, which can be accessed via the FXML as well
+	// the metadata object for this MoviePane, which can be accessed via the FXML as
+	// well
 	private MovieMetadata metadata;
 
 	/**
@@ -72,7 +73,7 @@ public class MoviePane extends Pane implements Comparable<MoviePane> {
 	 */
 	@FXML
 	public void initialize() {
-		
+
 		metadata.getImagePathProperty().addListener((observable, oldValue, newValue) -> {
 			System.out.println("image updated " + oldValue + " => " + newValue);
 			imageView.setImage(new Image(newValue));
@@ -81,8 +82,8 @@ public class MoviePane extends Pane implements Comparable<MoviePane> {
 		imageView.setImage(new Image(metadata.getImagePath()));
 		titleLabel.textProperty().bind(metadata.getTitleProperty());
 		releaseDateLabel.textProperty().bind(metadata.getReleaseDateProperty());
-		//TODO bind more properties here
-		
+		// TODO bind more properties here
+
 		moviePane.setOnMouseEntered(event -> {
 			PauseTransition delay = new PauseTransition(Duration.seconds(.75));
 			delay.setOnFinished(e -> {
@@ -123,7 +124,7 @@ public class MoviePane extends Pane implements Comparable<MoviePane> {
 	public void setMetadata(MovieMetadata metadata) {
 		this.metadata = metadata;
 	}
-	
+
 	public MovieMetadata getMetadata() {
 		return metadata;
 	}

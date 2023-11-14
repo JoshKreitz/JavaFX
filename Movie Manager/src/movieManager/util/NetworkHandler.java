@@ -1,4 +1,4 @@
-package movieManager.metadata;
+package movieManager.util;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -22,6 +22,9 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.util.Duration;
+import movieManager.metadata.MetadataManager;
+import movieManager.metadata.MovieFile;
+import movieManager.metadata.MovieMetadata;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 

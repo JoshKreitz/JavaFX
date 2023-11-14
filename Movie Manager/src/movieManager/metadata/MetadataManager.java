@@ -16,6 +16,10 @@ import javafx.beans.property.SimpleMapProperty;
 import javafx.collections.FXCollections;
 import movieManager.config.ConfigFile;
 import movieManager.movieShelf.ShelfController;
+import movieManager.util.NetworkHandler;
+import movieManager.util.SearchMovie;
+import movieManager.util.SearchResults;
+import movieManager.util.Serializer;
 
 /**
  * A key component to handle the core metadata map. This class controls the
@@ -70,7 +74,7 @@ public class MetadataManager {
 
 		// load an existing metadata map from the filesystem, if it exists
 		serializer = new Serializer<String, MovieMetadata>(metadataFolderPath);
-		metadata = serializer.readSerializedMap(); 
+		metadata = serializer.readSerializedMap();
 		if (metadata == null) {
 			metadata = new SimpleMapProperty<String, MovieMetadata>(FXCollections.observableHashMap());
 		}
@@ -135,7 +139,7 @@ public class MetadataManager {
 		// asynchronously populate data for the selected movies
 		downloadMovies(missingMetadataFiles);
 	}
-	
+
 	/**
 	 * Begin the request flow to download metadata for all requested movies
 	 * 
@@ -145,7 +149,7 @@ public class MetadataManager {
 		filenames.stream().map(MovieFile::new).forEach(movie -> {
 			// add a default entry
 			metadata.put(movie.getFilename(), new MovieMetadata(movie));
-			
+
 			NetworkHandler.downloadMovie(movie, this);
 		});
 	}
@@ -172,7 +176,7 @@ public class MetadataManager {
 				NetworkHandler.downloadMovie(movie, this);
 			}
 		} else {
-			System.out.println("more than one result");//TODO remove
+			System.out.println("more than one result");// TODO remove
 			List<SearchMovie> results = searchResults.getResults();
 
 			// sort results by popularity if there are more than one
@@ -214,7 +218,7 @@ public class MetadataManager {
 	private void setMetadata(MovieFile movie, SearchMovie result) {
 		System.out.println("Setting metadata for movie \"" + movie + "\": " + result);
 		MovieMetadata data = metadata.get(movie.getFilename());
-		if(data == null) {
+		if (data == null) {
 			metadata.put(movie.getFilename(), new MovieMetadata(result));
 		} else {
 			data.update(result);

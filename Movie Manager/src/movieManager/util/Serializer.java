@@ -1,4 +1,4 @@
-package movieManager.metadata;
+package movieManager.util;
 
 import java.io.File;
 import java.io.FileInputStream;

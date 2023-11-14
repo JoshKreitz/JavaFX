@@ -17,9 +17,9 @@ import movieManager.config.ConfigFile;
 import movieManager.fileManager.FileManagerController;
 import movieManager.metadata.MetadataManager;
 import movieManager.metadata.MovieMetadata;
-import movieManager.metadata.NetworkHandler;
 import movieManager.movieShelf.MoviePane;
 import movieManager.movieShelf.ShelfController;
+import movieManager.util.NetworkHandler;
 
 /*
  * This is the entry point of the application. This class establishes the root JavaFX Stage containing the top level tabs, and provides
@@ -86,7 +86,6 @@ public class Main extends Application {
 		Tab shelfTab = new Tab("Shelf", shelfLoader.load());
 		ShelfController shelfController = shelfLoader.getController();
 		shelfController.initData(config, metadataManager, networkHandler);
-//		metadataManager.setShelfController(shelfController);
 		tabs.add(shelfTab);
 
 		FXMLLoader fileManagerLoader = new FXMLLoader(getClass().getResource("fileManager/FileManager.fxml"));

@@ -48,16 +48,13 @@ Up next:
 	- implement network handler spinner
 	- fix sorting of results, not sure it's actually working by popularity
 	- fix serializer
+	- implement Image flow
 	
-	- link UI to metadata
-		- finish implementing popup
-		- add handling for changing shelf dir
-		- look for images "movieId.jpg" in the metadata folder
-	- create background task and get data!
+	- finish implementing popup
+	- add handling for changing shelf dir
 	- genres (essentially just tags)
 	
 	- add buttons to open files in VLC
-	- detect if shelf dir changes in config and reload metadata
 	
 Network request response flow:
 	- First request for movie, get list of results:
