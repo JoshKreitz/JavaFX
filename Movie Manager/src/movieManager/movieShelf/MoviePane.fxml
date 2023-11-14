@@ -18,8 +18,8 @@
 					</padding>
 
 					<HBox fx:id="popupContent" spacing="10" alignment="BOTTOM_CENTER">
-						<Label text="${moviePane.metadata.title}" styleClass="movieTitle" />
-						<Label text="${moviePane.metadata.releaseDate}" styleClass="releaseDate" alignment="BOTTOM_RIGHT" />
+						<Label fx:id="titleLabel" text="${moviePane.metadata.title}" styleClass="movieTitle" />
+						<Label fx:id="releaseDateLabel" text="${moviePane.metadata.releaseDate}" styleClass="releaseDate" alignment="BOTTOM_RIGHT" />
 					</HBox>
 				</VBox>
 			</content>

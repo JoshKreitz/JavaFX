@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.MapProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -95,22 +96,9 @@ public class ShelfController implements Initializable {
 			moviePanes.put(key, new MoviePane(meta));
 		}
 
-		//TODO remove
-		// sort em using compareTo in MoviePane
-		//Collections.sort(moviePanes);
-
-		// add em to the flow pane
+		// Sort them using the MoviePane CompareTo function add em to the flow pane
 		ObservableList<Node> children = flowPane.getChildren();
-		
-		moviePanes.entrySet().stream().sorted(Map.Entry.comparingByValue()).forEach(pane -> children.add(pane.getValue()));;
-//		for (MoviePane p : moviePanes) {
-//			children.add(p);
-//		}
-	}
-	
-	public void updateMoviePaneMetadata(String filename, MovieMetadata data) {
-		System.out.println("Updating metadata for file \"" + filename + "\" with data: " + data);
-		MoviePane selectedPane = moviePanes.get(filename);
-		selectedPane.setMetadata(data);
+		moviePanes.entrySet().stream().sorted(Map.Entry.comparingByValue())
+				.forEach(pane -> children.add(pane.getValue()));
 	}
 }

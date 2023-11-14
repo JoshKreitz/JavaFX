@@ -45,6 +45,10 @@ Local storage (located in movie dir):
 			- File: data.txt (description, release date, genres, etc)
 
 Up next:
+	- implement network handler spinner
+	- fix sorting of results, not sure it's actually working by popularity
+	- fix serializer
+	
 	- link UI to metadata
 		- finish implementing popup
 		- add handling for changing shelf dir
@@ -52,9 +56,6 @@ Up next:
 	- create background task and get data!
 	- genres (essentially just tags)
 	
-	- status: making requests, parsing into classes.
-		- Now I gotta narrow search results, handle results, download images
-		- more search parameters in the API?
 	- add buttons to open files in VLC
 	- detect if shelf dir changes in config and reload metadata
 	

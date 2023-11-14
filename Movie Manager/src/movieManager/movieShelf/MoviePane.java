@@ -9,6 +9,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -34,6 +35,9 @@ public class MoviePane extends Pane implements Comparable<MoviePane> {
 	@FXML private HBox popupContent;
 
 	@FXML private Button tmpButton; // TODO remove
+
+	@FXML private Label titleLabel;
+	@FXML private Label releaseDateLabel;
 
 	/**
 	 * LOCAL VARIABLES
@@ -68,9 +72,17 @@ public class MoviePane extends Pane implements Comparable<MoviePane> {
 	 */
 	@FXML
 	public void initialize() {
-		Image image = new Image(metadata.getImagePath());
-		imageView.setImage(image);
+		
+		metadata.getImagePathProperty().addListener((observable, oldValue, newValue) -> {
+			System.out.println("image updated " + oldValue + " => " + newValue);
+			imageView.setImage(new Image(newValue));
+		});
 
+		imageView.setImage(new Image(metadata.getImagePath()));
+		titleLabel.textProperty().bind(metadata.getTitleProperty());
+		releaseDateLabel.textProperty().bind(metadata.getReleaseDateProperty());
+		//TODO bind more properties here
+		
 		moviePane.setOnMouseEntered(event -> {
 			PauseTransition delay = new PauseTransition(Duration.seconds(.75));
 			delay.setOnFinished(e -> {

@@ -11,6 +11,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javafx.beans.property.MapProperty;
+import javafx.beans.property.SimpleMapProperty;
+import javafx.collections.FXCollections;
 import movieManager.config.ConfigFile;
 import movieManager.movieShelf.ShelfController;
 
@@ -30,9 +33,6 @@ public class MetadataManager {
 	// references to core entities
 	private ConfigFile config;
 	private Serializer<String, MovieMetadata> serializer;
-	private NetworkHandler networkHandler;
-
-	private ShelfController shelfController = null;
 
 	/**
 	 * Establish references and attempt to load the metadata from the filesystem
@@ -40,9 +40,8 @@ public class MetadataManager {
 	 * @param config
 	 * @param networkHandler
 	 */
-	public MetadataManager(ConfigFile config, NetworkHandler networkHandler) {
+	public MetadataManager(ConfigFile config) {
 		this.config = config;
-		this.networkHandler = networkHandler;
 
 		loadMetadata();
 
@@ -71,9 +70,9 @@ public class MetadataManager {
 
 		// load an existing metadata map from the filesystem, if it exists
 		serializer = new Serializer<String, MovieMetadata>(metadataFolderPath);
-		metadata = serializer.readSerializedMap();
+		metadata = serializer.readSerializedMap(); 
 		if (metadata == null) {
-			metadata = new HashMap<String, MovieMetadata>();
+			metadata = new SimpleMapProperty<String, MovieMetadata>(FXCollections.observableHashMap());
 		}
 
 		updateMetadataMap();
@@ -136,14 +135,19 @@ public class MetadataManager {
 		// asynchronously populate data for the selected movies
 		downloadMovies(missingMetadataFiles);
 	}
-
+	
 	/**
 	 * Begin the request flow to download metadata for all requested movies
 	 * 
 	 * @param filenames the filenames for movies that need metadata downloaded
 	 */
 	private void downloadMovies(Set<String> filenames) {
-		filenames.stream().map(MovieFile::new).forEach(movie -> NetworkHandler.downloadMovie(movie, this));
+		filenames.stream().map(MovieFile::new).forEach(movie -> {
+			// add a default entry
+			metadata.put(movie.getFilename(), new MovieMetadata(movie));
+			
+			NetworkHandler.downloadMovie(movie, this);
+		});
 	}
 
 	/**
@@ -208,17 +212,12 @@ public class MetadataManager {
 	 * @param result The metadata returned by the API
 	 */
 	private void setMetadata(MovieFile movie, SearchMovie result) {
-		MovieMetadata final_metadata = new MovieMetadata(result.getId(), result.getTitle(), result.getRelease_date(),
-				result.getOverview(), "", new ArrayList<String>());
-		System.out.println("Setting metadata for movie \"" + movie + "\": " + final_metadata);
-
-		String filename = movie.getFilename();
-		metadata.put(filename, final_metadata);
-
-		if (shelfController != null) {
-			shelfController.updateMoviePaneMetadata(filename, final_metadata);
+		System.out.println("Setting metadata for movie \"" + movie + "\": " + result);
+		MovieMetadata data = metadata.get(movie.getFilename());
+		if(data == null) {
+			metadata.put(movie.getFilename(), new MovieMetadata(result));
 		} else {
-			throw new IllegalStateException("Attempted to update metadata before controller was initialized");
+			data.update(result);
 		}
 	}
 
@@ -266,9 +265,5 @@ public class MetadataManager {
 		long oneYearMillis = 365L * 24 * 60 * 60 * 1000; // Approximation, doesn't account for leap years
 
 		return timeDifferenceMillis > oneYearMillis;
-	}
-
-	public void setShelfController(ShelfController shelfController) {
-		this.shelfController = shelfController;
 	}
 }

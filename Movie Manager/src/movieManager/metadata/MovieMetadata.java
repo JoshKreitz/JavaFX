@@ -4,6 +4,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javafx.beans.property.ListProperty;
+import javafx.beans.property.SimpleListProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+
 /**
  * A simple bean-style data class to contain all of the metadata for a single
  * movie.
@@ -19,11 +24,11 @@ public class MovieMetadata implements Serializable {
 	private int movieId;
 
 	// movie specific details
-	private String title;
-	private String releaseDate;
-	private String description;
-	private String imagePath;
-	private List<String> genres;
+	private StringProperty title = new SimpleStringProperty();
+	private StringProperty releaseDate = new SimpleStringProperty();
+	private StringProperty description = new SimpleStringProperty();
+	private StringProperty imagePath = new SimpleStringProperty();
+	private ListProperty<String> genres = new SimpleListProperty<String>();
 
 	// the specific time, in milliseconds, since this metadata was retrieved
 	private long metadataCreationDate;
@@ -33,12 +38,19 @@ public class MovieMetadata implements Serializable {
 	 */
 	public MovieMetadata() {
 		movieId = -1;
-		title = "Unavailable";
-		releaseDate = "01-01-1970";
-		description = "This movie's data has not been downloaded yet or is unavailable.";
-		imagePath = "file:" + DEFAULT_IMAGE_PATH;
-		genres = new ArrayList<String>();
+		title.set("Unavailable");
+		;
+		releaseDate.set("01-01-1970");
+		description.set("This movie's data has not been downloaded yet or is unavailable.");
+		imagePath.set("file:" + DEFAULT_IMAGE_PATH);
 		metadataCreationDate = System.currentTimeMillis();
+	}
+
+	public MovieMetadata(MovieFile file) {
+		this();
+		this.title.set(file.getTitle());
+		if (!file.getYear().isEmpty())
+			this.releaseDate.set(file.getYear());
 	}
 
 	/**
@@ -54,37 +66,50 @@ public class MovieMetadata implements Serializable {
 	public MovieMetadata(int movieId, String title, String releaseDate, String description, String imagePath,
 			List<String> genres) {
 		this.movieId = movieId;
-		this.title = title;
-		this.releaseDate = releaseDate;
-		this.description = description;
-		this.imagePath = imagePath;
-		this.genres = genres;
+		this.title.set(title);
+		this.releaseDate.set(releaseDate);
+		this.description.set(description);
+		this.imagePath.set(imagePath);
+		this.genres.removeAll();
+		this.genres.addAll(genres);
 
 		this.metadataCreationDate = System.currentTimeMillis();
 	}
 
+	public MovieMetadata(SearchMovie other) {
+		this();
+		update(other);
+	}
+
+	public void update(SearchMovie other) {
+		title.set(other.getTitle());
+		releaseDate.set(other.getRelease_date());
+		description.set(other.getOverview());
+		// TODO add here other fields for MoviePane, such as genres
+	}
+
 	public String getTitle() {
-		return title;
+		return title.get();
 	}
 
 	public void setTitle(String title) {
-		this.title = title;
+		this.title.set(title);
 	}
 
 	public String getReleaseDate() {
-		return releaseDate;
+		return releaseDate.get();
 	}
 
 	public void setReleaseDate(String releaseDate) {
-		this.releaseDate = releaseDate;
+		this.releaseDate.set(releaseDate);
 	}
 
 	public String getDescription() {
-		return description;
+		return description.get();
 	}
 
 	public void setDescription(String description) {
-		this.description = description;
+		this.description.set(description);
 	}
 
 	public List<String> getGenres() {
@@ -92,7 +117,8 @@ public class MovieMetadata implements Serializable {
 	}
 
 	public void setGenres(List<String> genres) {
-		this.genres = genres;
+		this.genres.removeAll();
+		this.genres.addAll(genres);
 	}
 
 	public long getMetadataCreationDate() {
@@ -112,15 +138,35 @@ public class MovieMetadata implements Serializable {
 	}
 
 	public String getImagePath() {
-		return imagePath;
+		return imagePath.get();
 	}
 
 	public void setImagePath(String imagePath) {
-		this.imagePath = imagePath;
+		this.imagePath.set(imagePath);
 	}
 
 	public boolean isDefault() {
 		return this.equals(new MovieMetadata());
+	}
+
+	public ListProperty<String> getGenresProperty() {
+		return genres;
+	}
+
+	public StringProperty getTitleProperty() {
+		return title;
+	}
+
+	public StringProperty getReleaseDateProperty() {
+		return releaseDate;
+	}
+
+	public StringProperty getDescriptionProperty() {
+		return description;
+	}
+
+	public StringProperty getImagePathProperty() {
+		return imagePath;
 	}
 
 	@Override

@@ -57,7 +57,7 @@ public class Main extends Application {
 
 		config = new ConfigFile();
 		this.networkHandler = new NetworkHandler();
-		metadataManager = new MetadataManager(config, networkHandler);
+		metadataManager = new MetadataManager(config);
 
 		loadTabs();
 
@@ -86,7 +86,7 @@ public class Main extends Application {
 		Tab shelfTab = new Tab("Shelf", shelfLoader.load());
 		ShelfController shelfController = shelfLoader.getController();
 		shelfController.initData(config, metadataManager, networkHandler);
-		metadataManager.setShelfController(shelfController);
+//		metadataManager.setShelfController(shelfController);
 		tabs.add(shelfTab);
 
 		FXMLLoader fileManagerLoader = new FXMLLoader(getClass().getResource("fileManager/FileManager.fxml"));
