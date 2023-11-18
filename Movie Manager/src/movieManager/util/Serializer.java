@@ -51,7 +51,8 @@ public class Serializer<A, B> {
 		try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
 			return (Map<A, B>) ois.readObject();
 		} catch (IOException | ClassNotFoundException e) {
-			System.out.println("Error reading the object: " + e.getMessage());
+			System.out.println("Error reading the object");
+			e.printStackTrace();
 			return null;
 		}
 	}
@@ -68,7 +69,8 @@ public class Serializer<A, B> {
 			oos.writeObject(map);
 			System.out.println("Object saved successfully!");
 		} catch (IOException e) {
-			System.out.println("Error saving the serial file: " + e.getMessage());
+			System.out.println("Error saving the serial file!");
+			e.printStackTrace();
 		}
 	}
 

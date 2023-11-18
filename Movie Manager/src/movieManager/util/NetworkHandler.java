@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -52,42 +53,33 @@ public class NetworkHandler {
 	private static final String API_KEY = "15d2ea6d0dc1d476efbca3eba2b9bbfb";
 
 	// properties bound to network-status UI elements on the Shelf page
-	private BooleanProperty displayLoadingSpinnerProperty = new SimpleBooleanProperty(true);
-	private StringProperty loadingMessageProperty = new SimpleStringProperty("default");
+	private static BooleanProperty displayLoadingSpinnerProperty = new SimpleBooleanProperty(true);
+	private static StringProperty loadingMessageProperty = new SimpleStringProperty("default");
 
 	// a mapper used to parse the JSON responses from the API
-	static final ObjectMapper mapper = new ObjectMapper();
+	private static final ObjectMapper mapper = new ObjectMapper();
+
+	// the number of requests that are still in flight
+	private static AtomicInteger numOpenRequests = new AtomicInteger(0);
 
 	public NetworkHandler() {
-	}
-
-	/**
-	 * Download metadata for the provided filenames and update it in the metadata
-	 * map
-	 * 
-	 * @param metadata  The core metadata map to be updated
-	 * @param filenames The files to be searched and downloaded
-	 */
-	@Deprecated
-	// TODO remove
-	public void downloadMovies(Map<String, MovieMetadata> metadata, Set<String> filenames) {
 
 		// TODO add UI element controls
-		loadingMessageProperty.set("TEST TEST");
+//		loadingMessageProperty.set("TEST TEST");
 
 		// TODO REMOVE
-		PauseTransition delay = new PauseTransition(Duration.seconds(3));
-		delay.setOnFinished(e -> {
-			System.out.println("gg");
-			loadingMessageProperty.set("get so fucked");
-		});
-		delay.playFromStart();
-		PauseTransition delay2 = new PauseTransition(Duration.seconds(4));
-		delay2.setOnFinished(e -> {
-			System.out.println("cya");
-			displayLoadingSpinnerProperty.set(false);
-		});
-		delay2.playFromStart();
+//		PauseTransition delay = new PauseTransition(Duration.seconds(3));
+//		delay.setOnFinished(e -> {
+//			System.out.println("gg");
+//			loadingMessageProperty.set("get so fucked");
+//		});
+//		delay.playFromStart();
+//		PauseTransition delay2 = new PauseTransition(Duration.seconds(4));
+//		delay2.setOnFinished(e -> {
+//			System.out.println("cya");
+//			displayLoadingSpinnerProperty.set(false);
+//		});
+//		delay2.playFromStart();
 	}
 
 	/**
@@ -104,13 +96,23 @@ public class NetworkHandler {
 		// asynchronously send out the request
 		CompletableFuture.runAsync(() -> {
 			System.out.println("Making call for \"" + movie.getTitle() + "\" with year \"" + movie.getYear() + "\"");
+			numOpenRequests.getAndIncrement();
+			updateUIToggles();
+			
 			HttpURLConnection connection = openConnection(url);
 			if (connection != null) {
 				SearchResults results = parseSearchResults(url, connection);
 				connection.disconnect();
-				System.out.println("Got results, calling handler: " + results);
-				manager.handleSearchResults(movie, results);
+				if (results != null) {
+					System.out.println("Got results, calling handler: " + results);
+					manager.handleSearchResults(movie, results);
+				} else {
+					System.out.println("Failed to fetch results for movie " + movie);
+				}
 			}
+			
+			numOpenRequests.getAndDecrement();
+			updateUIToggles();
 			// TODO do I need a failure callback? retry requests or anything? update UI?
 		});
 	}
@@ -175,6 +177,22 @@ public class NetworkHandler {
 			System.out.println("Error making API call to " + urlString + ": " + e.getMessage());
 		}
 		return null;
+	}
+
+	private static void updateUIToggles() {
+		int numOpen = numOpenRequests.get();
+		boolean spinnderDisplayed = displayLoadingSpinnerProperty.get();
+		if (numOpen > 0) {
+			if (!spinnderDisplayed) {
+				displayLoadingSpinnerProperty.set(true);
+			}
+			loadingMessageProperty.set(numOpen + "");
+		} else {
+			if (spinnderDisplayed) {
+				displayLoadingSpinnerProperty.set(false);
+			}
+			loadingMessageProperty.set("");
+		}
 	}
 
 	public BooleanProperty getDisplayLoadingSpinnerProperty() {

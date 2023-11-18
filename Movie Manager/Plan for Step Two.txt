@@ -46,8 +46,10 @@ Local storage (located in movie dir):
 
 Up next:
 	- implement network handler spinner
+		- should be fixed
 	- fix sorting of results, not sure it's actually working by popularity
 	- fix serializer
+		- metadata map still initialized as a MapProperty, change to hashmap
 	- implement Image flow
 	
 	- finish implementing popup
@@ -55,6 +57,8 @@ Up next:
 	- genres (essentially just tags)
 	
 	- add buttons to open files in VLC
+	- add proper logging
+		- Loggerfactory + logger or something else
 	
 Network request response flow:
 	- First request for movie, get list of results:
