@@ -1,13 +1,17 @@
 package movieManager.metadata;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import movieManager.util.SearchMovie;
 
 /**
@@ -25,11 +29,11 @@ public class MovieMetadata implements Serializable {
 	private int movieId;
 
 	// movie specific details
-	private StringProperty title = new SimpleStringProperty();
-	private StringProperty releaseDate = new SimpleStringProperty();
-	private StringProperty description = new SimpleStringProperty();
-	private StringProperty imagePath = new SimpleStringProperty();
-	private ListProperty<String> genres = new SimpleListProperty<String>();
+	private transient StringProperty title = new SimpleStringProperty();
+	private transient StringProperty releaseDate = new SimpleStringProperty();
+	private transient StringProperty description = new SimpleStringProperty();
+	private transient StringProperty imagePath = new SimpleStringProperty();
+	private transient ListProperty<String> genres = new SimpleListProperty<String>();
 
 	// the specific time, in milliseconds, since this metadata was retrieved
 	private long metadataCreationDate;
@@ -172,7 +176,8 @@ public class MovieMetadata implements Serializable {
 
 	@Override
 	public String toString() {
-		return String.format("MovieMetadata[%d,%s,%s,%s]", movieId, title, releaseDate, genres.toString());
+		return String.format("MovieMetadata[%d,%s,%s,%s,%d]", movieId, title, releaseDate, genres.toString(),
+				metadataCreationDate);
 	}
 
 	@Override
@@ -189,5 +194,67 @@ public class MovieMetadata implements Serializable {
 		return movieId == other.getMovieId() && title.equals(other.getTitle())
 				&& releaseDate.equals(other.getReleaseDate()) && description.equals(other.getDescription())
 				&& imagePath.equals(other.getImagePath());
+	}
+
+	/**
+	 * Serialize this object, but replace all the non-serializable Properties with
+	 * simple Strings
+	 * 
+	 * @param oos
+	 * @throws IOException
+	 */
+	private void writeObject(ObjectOutputStream oos) throws IOException {
+		// default serialization
+		oos.defaultWriteObject();
+
+		// write the object
+		oos.writeInt(movieId);
+		oos.writeObject(title.get());
+		oos.writeObject(releaseDate.get());
+		oos.writeObject(description.get());
+		oos.writeObject(imagePath.get());
+
+		oos.writeObject("START");
+		if (!genres.isEmpty()) {
+			for (String s : genres) {
+				oos.writeObject(s);
+			}
+		}
+		oos.writeObject("END");
+
+		oos.writeLong(metadataCreationDate);
+	}
+
+	/**
+	 * Deserialize this object, reading in the various properties from strings
+	 * 
+	 * @param ois
+	 * @throws ClassNotFoundException
+	 * @throws IOException
+	 */
+	private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
+		// default deserialization
+		ois.defaultReadObject();
+
+		movieId = ois.readInt();
+		title = new SimpleStringProperty((String) ois.readObject());
+		releaseDate = new SimpleStringProperty((String) ois.readObject());
+		description = new SimpleStringProperty((String) ois.readObject());
+		imagePath = new SimpleStringProperty((String) ois.readObject());
+
+		// genres
+		String start = (String) ois.readObject();
+		if (!start.equals("START")) {
+			throw new IOException("Failed to parse metadata");
+		}
+		ObservableList<String> parsedGenres = FXCollections.observableArrayList();
+		String line;
+		while (!(line = (String) ois.readObject()).equals("END")) {
+			// System.out.println(line);
+			parsedGenres.add(line);
+		}
+		genres = new SimpleListProperty<String>(parsedGenres);
+
+		metadataCreationDate = ois.readLong();
 	}
 }

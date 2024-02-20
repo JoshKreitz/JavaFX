@@ -76,7 +76,10 @@ public class MetadataManager {
 		serializer = new Serializer<String, MovieMetadata>(metadataFolderPath);
 		metadata = serializer.readSerializedMap();
 		if (metadata == null) {
-			metadata = new SimpleMapProperty<String, MovieMetadata>(FXCollections.observableHashMap());
+			System.out.println("Metadata map parsed as null");
+			metadata = new HashMap<String, MovieMetadata>(FXCollections.observableHashMap());
+		} else {
+			System.out.println("Successfully parsed metadata map: " + metadata);
 		}
 
 		updateMetadataMap();
@@ -120,7 +123,7 @@ public class MetadataManager {
 				continue;
 
 			// remove file extension
-			filename = filename.substring(0, filename.lastIndexOf(".")).trim();
+			//filename = filename.substring(0, filename.lastIndexOf(".")).trim();
 
 			// fetch metadata for selected files
 			if (!existingMetadataFiles.contains(filename)
@@ -133,8 +136,14 @@ public class MetadataManager {
 				// metadata.put(filename, new MovieMetadata());
 			}
 		}
+		
+		//TODO REMOVE
+		//System.out.println("existingMetadataFiles: " + existingMetadataFiles + "\nmissing: " + missingMetadataFiles);
 
 		removeUnassociatedMetadata(shelfDirFiles);
+		
+		//TODO REMOVE
+		//System.out.println("existingMetadataFiles: " + existingMetadataFiles + "\nmissing: " + missingMetadataFiles);
 
 		// asynchronously populate data for the selected movies
 		downloadMovies(missingMetadataFiles);
@@ -147,6 +156,7 @@ public class MetadataManager {
 	 */
 	private void downloadMovies(Set<String> filenames) {
 		filenames.stream().map(MovieFile::new).forEach(movie -> {
+			System.out.println("FILENAME: " + movie.getFilename());
 			// add a default entry
 			metadata.put(movie.getFilename(), new MovieMetadata(movie));
 
@@ -216,7 +226,7 @@ public class MetadataManager {
 	 * @param result The metadata returned by the API
 	 */
 	private void setMetadata(MovieFile movie, SearchMovie result) {
-		System.out.println("Setting metadata for movie \"" + movie + "\": " + result);
+		//System.out.println("Setting metadata for movie \"" + movie + "\": " + result);
 		MovieMetadata data = metadata.get(movie.getFilename());
 		if (data == null) {
 			metadata.put(movie.getFilename(), new MovieMetadata(result));
@@ -232,6 +242,7 @@ public class MetadataManager {
 	 */
 	private void removeUnassociatedMetadata(File[] shelfDirFiles) {
 		Set<String> filenames = Arrays.stream(shelfDirFiles).map(File::getName).collect(Collectors.toSet());
+		System.out.println("filenames: " + filenames);
 		metadata.keySet().removeIf((s) -> !filenames.contains(s));
 	}
 

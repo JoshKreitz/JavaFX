@@ -68,6 +68,7 @@ public class Serializer<A, B> {
 		try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename))) {
 			oos.writeObject(map);
 			System.out.println("Object saved successfully!");
+			System.out.println(map);
 		} catch (IOException e) {
 			System.out.println("Error saving the serial file!");
 			e.printStackTrace();

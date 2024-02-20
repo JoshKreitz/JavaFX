@@ -21,6 +21,7 @@
 						<Label fx:id="titleLabel" text="${moviePane.metadata.title}" styleClass="movieTitle" />
 						<Label fx:id="releaseDateLabel" text="${moviePane.metadata.releaseDate}" styleClass="releaseDate" alignment="BOTTOM_RIGHT" />
 					</HBox>
+					<Label fx:id="descriptionLabel" text="{moviePane.metadata.description}" styleClass="description" />
 				</VBox>
 			</content>
 		</Popup>

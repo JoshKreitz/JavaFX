@@ -38,6 +38,7 @@ public class MoviePane extends Pane implements Comparable<MoviePane> {
 
 	@FXML private Label titleLabel;
 	@FXML private Label releaseDateLabel;
+	@FXML private Label descriptionLabel;
 
 	/**
 	 * LOCAL VARIABLES
@@ -82,6 +83,7 @@ public class MoviePane extends Pane implements Comparable<MoviePane> {
 		imageView.setImage(new Image(metadata.getImagePath()));
 		titleLabel.textProperty().bind(metadata.getTitleProperty());
 		releaseDateLabel.textProperty().bind(metadata.getReleaseDateProperty());
+		descriptionLabel.textProperty().bind(metadata.getDescriptionProperty());
 		// TODO bind more properties here
 
 		moviePane.setOnMouseEntered(event -> {

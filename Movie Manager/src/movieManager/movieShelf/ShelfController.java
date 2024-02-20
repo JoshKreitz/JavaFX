@@ -88,6 +88,7 @@ public class ShelfController implements Initializable {
 	 */
 	private void initializeMovies() {
 		Map<String, MovieMetadata> metadata = metadataManager.getAllMetadata();
+		System.out.println("initializing movie panes: " + metadata);
 		moviePanes = new HashMap<String, MoviePane>();
 
 		// create all the movie panes
