@@ -1,8 +1,11 @@
 package movieManager;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.io.InputStream;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 import javafx.application.Application;
 import javafx.beans.value.ObservableValue;
@@ -16,8 +19,6 @@ import movieManager.config.ConfigController;
 import movieManager.config.ConfigFile;
 import movieManager.fileManager.FileManagerController;
 import movieManager.metadata.MetadataManager;
-import movieManager.metadata.MovieMetadata;
-import movieManager.movieShelf.MoviePane;
 import movieManager.movieShelf.ShelfController;
 import movieManager.util.NetworkHandler;
 
@@ -40,7 +41,12 @@ public class Main extends Application {
 	// The core network handler, which takes care of all external network calls
 	NetworkHandler networkHandler;
 
+	private static Logger logger = Logger.getLogger(Main.class.getName());
+
 	public static void main(String[] args) {
+		initializeLogger();
+		logger.info("Starting Movie Manager...");
+
 		launch(args);
 	}
 
@@ -69,6 +75,7 @@ public class Main extends Application {
 		primaryStage.setMinWidth(625);
 		primaryStage.setMaximized(false);
 
+		logger.fine("Showing main scene");
 		primaryStage.setScene(scene);
 		primaryStage.show();
 	}
@@ -117,5 +124,27 @@ public class Main extends Application {
 						System.out.println("SOMETHING GOOFED");
 					}
 				});
+	}
+
+	private static void initializeLogger() {
+		logger.setLevel(Level.ALL);
+		logger.info("Initializing Logger - attempting to load configuration file");
+
+		LogManager logmanager = LogManager.getLogManager();
+
+		try {
+			InputStream configFile = Main.class.getResourceAsStream("/logging.properties");
+			if (configFile == null) {
+				throw new IOException();
+			}
+			LogManager.getLogManager().readConfiguration(configFile);
+			logger.info("Successfully loaded logging configuration");
+			logger.fine(String.format("Logging Level: %s", logmanager.getProperty(".level")));
+			logger.fine(String.format("Logging Handler Level: %s",
+					logmanager.getProperty("java.util.logging.ConsoleHandler.level")));
+		} catch (IOException | NullPointerException ex) {
+			System.out.println("WARNING: Could not open logging configuration file");
+			System.out.println("WARNING: Logging not configured (console output only)");
+		}
 	}
 }

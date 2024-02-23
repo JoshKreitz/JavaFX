@@ -9,6 +9,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import javafx.beans.property.MapProperty;
@@ -38,6 +41,8 @@ public class MetadataManager {
 	private ConfigFile config;
 	private Serializer<String, MovieMetadata> serializer;
 
+	private static final Logger logger = Logger.getLogger(MetadataManager.class.getName());
+
 	/**
 	 * Establish references and attempt to load the metadata from the filesystem
 	 * 
@@ -45,6 +50,7 @@ public class MetadataManager {
 	 * @param networkHandler
 	 */
 	public MetadataManager(ConfigFile config) {
+		logger.fine("Initializing MetadataManager");
 		this.config = config;
 
 		loadMetadata();
@@ -60,6 +66,7 @@ public class MetadataManager {
 	 * Reload the metadata from the filesystem
 	 */
 	public void reloadMetadata() {
+		logger.info("Reloading metadata from the filesystem");
 		loadMetadata();
 	}
 
@@ -69,6 +76,7 @@ public class MetadataManager {
 	 */
 	private void loadMetadata() {
 		String metadataFolderPath = ConfigFile.normalizeTrailingSlash(config.getShelfDir() + METADATA_FOLDER_NAME);
+		logger.info(String.format("Attempting to load existing metadata (%s)", metadataFolderPath));
 
 		validateMetadataFolder(metadataFolderPath);
 
@@ -76,10 +84,11 @@ public class MetadataManager {
 		serializer = new Serializer<String, MovieMetadata>(metadataFolderPath);
 		metadata = serializer.readSerializedMap();
 		if (metadata == null) {
-			System.out.println("Metadata map parsed as null");
+			logger.warning("Metadata map parsed as null");
 			metadata = new HashMap<String, MovieMetadata>(FXCollections.observableHashMap());
 		} else {
-			System.out.println("Successfully parsed metadata map: " + metadata);
+			logger.info("Successfully parsed cached metadata map");
+			logger.finer(String.format("metadata: %s", metadata));
 		}
 
 		updateMetadataMap();
@@ -92,6 +101,7 @@ public class MetadataManager {
 		File dir = new File(metadataFolderPath);
 		if (dir.exists()) {
 			if (!dir.isDirectory()) {
+				logger.severe("Metadata folder exists, but it's not a directory");
 				throw new IllegalStateException(
 						"Unable to create metadata folder, as it exists as a file: " + metadataFolderPath);
 			}
@@ -111,24 +121,31 @@ public class MetadataManager {
 		Set<String> missingMetadataFiles = new HashSet<String>();
 
 		File[] shelfDirFiles = new File(config.getShelfDir()).listFiles();
+		logger.fine("Updating metadata map from the filesystem");
 
 		for (File f : shelfDirFiles) {
 			// skip directories and... non-existent files?
-			if (!f.exists() || f.isDirectory())
+			if (!f.exists() || f.isDirectory()) {
+				logger.finer(String.format("skipping file \"%s\"", f.getName()));
 				continue;
+			}
 
 			// skip subtitle files
 			String filename = f.getName();
-			if (filename.endsWith(".srt"))
+			if (filename.endsWith(".srt")) {
+				logger.finer(String.format("skipping file \"%s\"", filename));
 				continue;
+			}
 
 			// remove file extension
-			//filename = filename.substring(0, filename.lastIndexOf(".")).trim();
+			// TODO remove?
+			// filename = filename.substring(0, filename.lastIndexOf(".")).trim();
 
 			// fetch metadata for selected files
 			if (!existingMetadataFiles.contains(filename)
 					|| isOlderThanOneYear(metadata.get(filename).getMetadataCreationDate())
 					|| metadata.get(filename).isDefault()) {
+				logger.finer(String.format("removing data for file \"%s\"", filename));
 				metadata.remove(filename);
 				missingMetadataFiles.add(filename);
 
@@ -136,14 +153,14 @@ public class MetadataManager {
 				// metadata.put(filename, new MovieMetadata());
 			}
 		}
-		
-		//TODO REMOVE
-		//System.out.println("existingMetadataFiles: " + existingMetadataFiles + "\nmissing: " + missingMetadataFiles);
+
+		logger.finer(String.format("pre existingMetadataFiles: %s", existingMetadataFiles.toString()));
+		logger.finer(String.format("pre missingMetadataFiles: %s", missingMetadataFiles.toString()));
 
 		removeUnassociatedMetadata(shelfDirFiles);
-		
-		//TODO REMOVE
-		//System.out.println("existingMetadataFiles: " + existingMetadataFiles + "\nmissing: " + missingMetadataFiles);
+
+		logger.finer(String.format("post existingMetadataFiles: %s", existingMetadataFiles.toString()));
+		logger.finer(String.format("post missingMetadataFiles: %s", missingMetadataFiles.toString()));
 
 		// asynchronously populate data for the selected movies
 		downloadMovies(missingMetadataFiles);
@@ -155,8 +172,12 @@ public class MetadataManager {
 	 * @param filenames the filenames for movies that need metadata downloaded
 	 */
 	private void downloadMovies(Set<String> filenames) {
+		logger.info(String.format("Downloading metadata for %d movies", filenames.size()));
+		logger.finer(String.format("movies to download: %s", filenames));
+
 		filenames.stream().map(MovieFile::new).forEach(movie -> {
-			System.out.println("FILENAME: " + movie.getFilename());
+			logger.fine(String.format("Downloading movie \"%s\"", movie.getFilename()));
+
 			// add a default entry
 			metadata.put(movie.getFilename(), new MovieMetadata(movie));
 
@@ -178,15 +199,16 @@ public class MetadataManager {
 		int totalResults = searchResults.getTotal_results();
 		// no API results were returned
 		if (totalResults == 0) {
-			System.out.println("No search results for movie \"" + movie.getFilename() + "\"");
+			logger.fine(String.format("No search results for movie \"%s\"", movie.getFilename()));
+
 			// if the movie has a year, remove it and try to fetch it again
 			if (movie.hasYear()) {
-				System.out.println("Reattempting request for movie \"" + movie.getFilename() + "\" without year");
+				logger.fine(String.format("Reattempting request for movie \"%s\" without year", movie.getFilename()));
 				movie.removeYear();
 				NetworkHandler.downloadMovie(movie, this);
 			}
 		} else {
-			System.out.println("more than one result");// TODO remove
+			logger.fine(String.format("Movie \"%s\" returned %d search results", movie.getFilename(), totalResults));
 			List<SearchMovie> results = searchResults.getResults();
 
 			// sort results by popularity if there are more than one
@@ -226,9 +248,10 @@ public class MetadataManager {
 	 * @param result The metadata returned by the API
 	 */
 	private void setMetadata(MovieFile movie, SearchMovie result) {
-		//System.out.println("Setting metadata for movie \"" + movie + "\": " + result);
+		logger.fine(String.format("\"Setting metadata for movie \"%s\"\" --> \"%s\"", movie, result));
 		MovieMetadata data = metadata.get(movie.getFilename());
 		if (data == null) {
+			logger.warning(String.format("Using the default metadata for movie \"%s\"", movie.getFilename()));
 			metadata.put(movie.getFilename(), new MovieMetadata(result));
 		} else {
 			data.update(result);
@@ -242,8 +265,14 @@ public class MetadataManager {
 	 */
 	private void removeUnassociatedMetadata(File[] shelfDirFiles) {
 		Set<String> filenames = Arrays.stream(shelfDirFiles).map(File::getName).collect(Collectors.toSet());
-		System.out.println("filenames: " + filenames);
-		metadata.keySet().removeIf((s) -> !filenames.contains(s));
+		Set<String> metadataKeySet = metadata.keySet();
+		Set<String> beforeSet = new HashSet<String>(metadataKeySet);
+		metadataKeySet.removeIf((s) -> !filenames.contains(s));
+
+		logger.fine(String.format("Removing %d cached metadata entries that don't have associated files",
+				Math.abs(beforeSet.size() - metadataKeySet.size())));
+		logger.finer(String.format("Removed: %s", beforeSet.stream().filter(f -> !metadataKeySet.contains(f))
+				.collect(Collectors.toCollection(ArrayList::new))));
 	}
 
 	/**
