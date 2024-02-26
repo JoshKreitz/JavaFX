@@ -76,6 +76,7 @@ public class MoviePane extends Pane implements Comparable<MoviePane> {
 	public void initialize() {
 
 		metadata.getImagePathProperty().addListener((observable, oldValue, newValue) -> {
+			//TODO remove
 			System.out.println("image updated " + oldValue + " => " + newValue);
 			imageView.setImage(new Image(newValue));
 		});

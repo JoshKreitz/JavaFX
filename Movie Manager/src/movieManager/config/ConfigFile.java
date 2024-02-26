@@ -10,6 +10,7 @@ import java.nio.file.FileSystemException;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * Manage the core application config file, which saves any configuration
@@ -32,17 +33,21 @@ public class ConfigFile {
 	// A parsed representation of values read from the config file
 	private Map<String, String> fileContents;
 
+	private static Logger logger = Logger.getLogger(ConfigFile.class.getName());
+
 	/**
 	 * Creates the config file if it doesn't already exist, or reads in it's
 	 * contents if it does.
 	 */
 	public ConfigFile() {
+		logger.info("Initializing ConfigFile");
 		fileContents = new HashMap<String, String>();
 
 		try {
 			CONFIG_FILE.createNewFile();
 
 			if (!CONFIG_FILE.exists() || CONFIG_FILE.isDirectory()) {
+				logger.warning(String.format("Config file missing or malformed (%s)", CONFIG_FILE_LOCATION));
 				throw new FileSystemException("Config file missing or malformed: " + CONFIG_FILE_LOCATION);
 			}
 
@@ -76,11 +81,13 @@ public class ConfigFile {
 	 * @throws ParseException if no delimiter is found
 	 */
 	private void parseFileLine(String line) throws ParseException {
+		logger.finer(String.format("Config line: %s", line));
 		if (line.isEmpty()) {
 			return;
 		}
 
 		if (!line.contains(DELIMITER)) {
+			logger.warning(String.format("No delimiter found on line: ", line));
 			throw new ParseException("No delimiter found on line: " + line, 0);
 		}
 
@@ -92,17 +99,18 @@ public class ConfigFile {
 	 * Writes the current config parameters to the config file
 	 */
 	public void saveFile() {
+		logger.info("Saving config file");
 		try (BufferedWriter bw = new BufferedWriter(new FileWriter(CONFIG_FILE.getAbsoluteFile()))) {
 			for (String key : fileContents.keySet()) {
 				bw.write(key + DELIMITER + fileContents.get(key) + "\n");
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.warning(String.format("Failed to save config file (%s)", e.getMessage()));
+			e.printStackTrace(System.err);
 		}
 	}
 
 	public String getFileManagerDir() {
-
 		return fileContents.containsKey(FILE_MANAGER_DIR_NAME) ? fileContents.get(FILE_MANAGER_DIR_NAME) : "";
 	}
 

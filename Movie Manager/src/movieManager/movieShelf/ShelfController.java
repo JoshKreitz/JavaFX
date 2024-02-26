@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.logging.Logger;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.MapProperty;
@@ -49,9 +50,12 @@ public class ShelfController implements Initializable {
 	private NetworkHandler networkHandler;
 
 	private Map<String, MoviePane> moviePanes;
+	
+	private static Logger logger = Logger.getLogger(ShelfController.class.getName());
 
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
+		logger.fine("Initializing ShelfController");
 	}
 
 	/**
@@ -63,7 +67,9 @@ public class ShelfController implements Initializable {
 	 * @param networkHandler
 	 */
 	public void initData(ConfigFile config, MetadataManager metadataManager, NetworkHandler networkHandler) {
+		logger.fine("Initializing ShelfController data");
 		if (this.config != null) {
+			logger.severe("ConfigFile can only be initialized once");
 			throw new IllegalStateException("ConfigFile can only be initialized once");
 		}
 
@@ -88,10 +94,12 @@ public class ShelfController implements Initializable {
 	 */
 	private void initializeMovies() {
 		Map<String, MovieMetadata> metadata = metadataManager.getAllMetadata();
-		System.out.println("initializing movie panes: " + metadata);
-		moviePanes = new HashMap<String, MoviePane>();
-
+		
+		logger.info("Creating inital MoviePane elements");
+		logger.finer(String.format("Current metadata %s", metadata));
+		
 		// create all the movie panes
+		moviePanes = new HashMap<String, MoviePane>();
 		for (String key : metadata.keySet()) {
 			MovieMetadata meta = metadata.get(key);
 			moviePanes.put(key, new MoviePane(meta));

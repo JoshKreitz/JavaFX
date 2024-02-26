@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.Logger;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -81,11 +82,15 @@ public class FileManagerController implements Initializable {
 	// The application's config file parameters
 	private ConfigFile config;
 
+	private static Logger logger = Logger.getLogger(FileManagerController.class.getName());
+
 	/**
 	 * Establish UI elements
 	 */
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		logger.info("Initializing FileManagerController");
+
 		nameCol.setCellValueFactory(new PropertyValueFactory<FileView, String>("name"));
 		typeCol.setCellValueFactory(new PropertyValueFactory<FileView, String>("type"));
 		contentsCol.setCellValueFactory(new PropertyValueFactory<FileView, String>("contents"));
@@ -101,7 +106,9 @@ public class FileManagerController implements Initializable {
 	 * @param config
 	 */
 	public void initData(ConfigFile config) {
+		logger.info("Initializing FileManagerController data");
 		if (this.config != null) {
+			logger.severe("ConfigFile can only be initialized once");
 			throw new IllegalStateException("ConfigFile can only be initialized once");
 		}
 
@@ -160,21 +167,26 @@ public class FileManagerController implements Initializable {
 	 * @return true iff the path is valid and the directory is loaded properly
 	 */
 	private boolean loadDirectory(String path) {
+		logger.info(String.format("Loading directory %s", path));
 		if (path.contains("\\") && !path.contains("\\\\")) {
 			path.replace("\\", "/");
+			logger.fine(String.format("Replacing \"\\\" with \"/\" (after: %s)", path));
 		}
 
 		File dir = new File(path);
 
 		if (!dir.exists()) {
+			logger.warning("Invalid or non-existant path provided");
 			sourceDirStatus.setText("Invalid or non-existant path provided");
 			return false;
 		}
 		if (!dir.isDirectory()) {
+			logger.warning("Provided path is not a directory");
 			sourceDirStatus.setText("Provided path is not a directory");
 			return false;
 		}
 
+		logger.info(String.format("Successfully loaded %d files in directory \"%s\"", dir.list().length, path));
 		sourceDirStatus.setText("Success! This dir contains " + dir.list().length + " files");
 		sourceDirTextField.setText(path);
 		directory = dir;
@@ -188,7 +200,9 @@ public class FileManagerController implements Initializable {
 	 * directory
 	 */
 	private void loadTable() {
+		logger.info("Populating FileManager table");
 		if (directory == null) {
+			logger.severe("FileManager directory is null");
 			throw new IllegalStateException("directory is null!");
 		}
 
@@ -368,9 +382,12 @@ public class FileManagerController implements Initializable {
 					new_filename += " " + s;
 			}
 
+			logger.fine(
+					String.format("Formatted original filename \"%s\" into \"%s\"", original_filename, new_filename));
 			return new_filename + "." + getFileType(original_filename);
 		}
 
+		logger.fine(String.format("Failed to format filename \"%s\"", original_filename));
 		return original_filename;
 	}
 
@@ -414,12 +431,14 @@ public class FileManagerController implements Initializable {
 	/**
 	 * Save the file name edited/modified by the user
 	 * 
-	 * @throws IOException if the file failes to save
+	 * @throws IOException if the file fails to save
 	 */
 	public void saveFile() throws IOException {
 		if (!currentFile.exists() || (parentDir != null && !parentDir.exists())) {
 			return;
 		}
+
+		logger.fine(String.format("Saving file %s", currentFile.getName()));
 
 		String filename = editedNameField.getText();
 		String typeStrippedNewFilename = stripFileType(filename);
@@ -448,6 +467,7 @@ public class FileManagerController implements Initializable {
 						StandardCopyOption.REPLACE_EXISTING);
 			}
 
+			logger.fine(String.format("Deleting parent dir \"%s\"", parentDir.getName()));
 			parentDir.delete();
 			squashedDir = true;
 		}
@@ -494,6 +514,7 @@ public class FileManagerController implements Initializable {
 	 * @throws IOException if the file cannot be written to
 	 */
 	private void renameFile(File f, String filename) throws IOException {
+		logger.fine(String.format("Renaming file \"%s\" -> \"%s\"", f.getName(), filename));
 		Path source = Paths.get(f.getAbsolutePath());
 		Files.move(source, source.resolveSibling(filename));
 	}

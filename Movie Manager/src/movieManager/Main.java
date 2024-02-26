@@ -20,6 +20,7 @@ import movieManager.config.ConfigFile;
 import movieManager.fileManager.FileManagerController;
 import movieManager.metadata.MetadataManager;
 import movieManager.movieShelf.ShelfController;
+import movieManager.util.DelayResetLogManager;
 import movieManager.util.NetworkHandler;
 
 /*
@@ -40,6 +41,11 @@ public class Main extends Application {
 
 	// The core network handler, which takes care of all external network calls
 	NetworkHandler networkHandler;
+
+	// Establish the custom logging manager to be used for all of the loggers
+	static {
+		System.setProperty("java.util.logging.manager", DelayResetLogManager.class.getName());
+	}
 
 	private static Logger logger = Logger.getLogger(Main.class.getName());
 
@@ -142,6 +148,7 @@ public class Main extends Application {
 			logger.fine(String.format("Logging Level: %s", logmanager.getProperty(".level")));
 			logger.fine(String.format("Logging Handler Level: %s",
 					logmanager.getProperty("java.util.logging.ConsoleHandler.level")));
+			logger.info(DelayResetLogManager.getLogManager().getClass().getName());
 		} catch (IOException | NullPointerException ex) {
 			System.out.println("WARNING: Could not open logging configuration file");
 			System.out.println("WARNING: Logging not configured (console output only)");

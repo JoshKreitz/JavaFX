@@ -9,16 +9,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.LogManager;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import javafx.beans.property.MapProperty;
-import javafx.beans.property.SimpleMapProperty;
 import javafx.collections.FXCollections;
 import movieManager.config.ConfigFile;
-import movieManager.movieShelf.ShelfController;
+import movieManager.util.DelayResetLogManager;
 import movieManager.util.NetworkHandler;
 import movieManager.util.SearchMovie;
 import movieManager.util.SearchResults;
@@ -57,8 +53,15 @@ public class MetadataManager {
 
 		// add exit shutdown hook to save the map before closing the application
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-			if (metadata != null && !metadata.isEmpty())
-				serializer.saveSerializedMap(metadata);
+			try {
+				logger.info("Shutting down...");
+				if (metadata != null && !metadata.isEmpty())
+					serializer.saveSerializedMap(metadata);
+			} finally {
+				// initiate the custom log manager to kill the loggers only after the shutdown
+				// hook has run through
+				DelayResetLogManager.resetFinally();
+			}
 		}));
 	}
 

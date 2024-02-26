@@ -5,6 +5,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
@@ -37,6 +38,8 @@ public class MovieMetadata implements Serializable {
 
 	// the specific time, in milliseconds, since this metadata was retrieved
 	private long metadataCreationDate;
+
+	private static Logger logger = Logger.getLogger(MovieMetadata.class.getName());
 
 	/**
 	 * Create a metadata object with default parameters
@@ -204,6 +207,8 @@ public class MovieMetadata implements Serializable {
 	 * @throws IOException
 	 */
 	private void writeObject(ObjectOutputStream oos) throws IOException {
+		logger.finer(String.format("Serializing metadata object (%s)", title.get()));
+
 		// default serialization
 		oos.defaultWriteObject();
 
@@ -233,6 +238,8 @@ public class MovieMetadata implements Serializable {
 	 * @throws IOException
 	 */
 	private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
+		logger.fine("Deserializing new object");
+
 		// default deserialization
 		ois.defaultReadObject();
 
@@ -245,12 +252,13 @@ public class MovieMetadata implements Serializable {
 		// genres
 		String start = (String) ois.readObject();
 		if (!start.equals("START")) {
+			logger.warning(String.format("Failed to deserialize object, START flag missing (%s)", start));
 			throw new IOException("Failed to parse metadata");
 		}
 		ObservableList<String> parsedGenres = FXCollections.observableArrayList();
 		String line;
 		while (!(line = (String) ois.readObject()).equals("END")) {
-			// System.out.println(line);
+			logger.finer(line);
 			parsedGenres.add(line);
 		}
 		genres = new SimpleListProperty<String>(parsedGenres);

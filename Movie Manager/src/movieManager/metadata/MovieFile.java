@@ -1,5 +1,7 @@
 package movieManager.metadata;
 
+import java.util.logging.Logger;
+
 /**
  * A simple object to parse a filename and keep the extracted title associated
  * with it's release date year. This assumes the filename follows the syntax "V
@@ -10,6 +12,8 @@ public class MovieFile {
 	private String filename;
 	private String title;
 	private String year;
+
+	private static Logger logger = Logger.getLogger(MovieFile.class.getName());
 
 	// parse out the title and year
 	public MovieFile(String filename) {
@@ -35,6 +39,8 @@ public class MovieFile {
 			year = "";
 			title = filename;
 		}
+
+		logger.fine(String.format("Parsed filename \"%s\" into title \"%s\" and year \"%s\"", filename, title, year));
 	}
 
 	public boolean hasYear() {

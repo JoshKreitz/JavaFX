@@ -11,6 +11,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Map;
+import java.util.logging.Logger;
+
+import movieManager.metadata.MetadataManager;
 
 /**
  * A class to handle saving and loading the metadata in a specific directory
@@ -26,6 +29,8 @@ public class Serializer<A, B> {
 	// the fully qualified filename for the save file
 	private String filename;
 
+	private static final Logger logger = Logger.getLogger(Serializer.class.getName());
+
 	/**
 	 * Load the target directory
 	 * 
@@ -33,6 +38,7 @@ public class Serializer<A, B> {
 	 */
 	public Serializer(String rootDir) {
 		this.filename = rootDir += FILENAME_MAP_FILENAME;
+		logger.fine(String.format("Initializing Serializer (%s)", filename));
 	}
 
 	/**
@@ -42,17 +48,18 @@ public class Serializer<A, B> {
 	 */
 	@SuppressWarnings("unchecked")
 	public Map<A, B> readSerializedMap() {
+		logger.info("Reading in save file");
 		File file = new File(filename);
 		if (!file.exists()) {
-			System.out.println("Serial file does not exist");
+			logger.warning("Serial file does not exist");
 			return null;
 		}
 
 		try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
 			return (Map<A, B>) ois.readObject();
 		} catch (IOException | ClassNotFoundException e) {
-			System.out.println("Error reading the object");
-			e.printStackTrace();
+			logger.warning("Error reading the Serial object");
+			e.printStackTrace(System.err);
 			return null;
 		}
 	}
@@ -63,14 +70,15 @@ public class Serializer<A, B> {
 	 * @param map the metadata map
 	 */
 	public void saveSerializedMap(Map<A, B> map) {
+		logger.info("Saving serial file");
 		backupFile();
 
 		try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename))) {
 			oos.writeObject(map);
-			System.out.println("Object saved successfully!");
-			System.out.println(map);
+			logger.info("Saved metadata successfully!");
+			logger.finer(String.format("Save data: %s", map.toString()));
 		} catch (IOException e) {
-			System.out.println("Error saving the serial file!");
+			logger.severe(String.format("Error saving the serial file! (%s)", e.getMessage()));
 			e.printStackTrace();
 		}
 	}
@@ -92,11 +100,13 @@ public class Serializer<A, B> {
 			backupFilename = filename + "-BACKUP";
 		}
 
+		logger.fine(String.format("Backing up serial file (%s)", backupFilename));
+
 		try {
 			Files.copy(file, Paths.get(backupFilename), StandardCopyOption.REPLACE_EXISTING);
 		} catch (IOException e) {
-			System.out.println("Failed to make a backup of the serial file!");
-			e.printStackTrace();
+			logger.warning(String.format("Failed to make a backup of the serial file! (%s)", backupFilename));
+			e.printStackTrace(System.err);
 		}
 	}
 }

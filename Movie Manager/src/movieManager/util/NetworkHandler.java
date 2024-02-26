@@ -9,24 +9,16 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
+import java.util.logging.Logger;
 
-import javafx.animation.PauseTransition;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.util.Duration;
 import movieManager.metadata.MetadataManager;
 import movieManager.metadata.MovieFile;
-import movieManager.metadata.MovieMetadata;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
@@ -62,7 +54,10 @@ public class NetworkHandler {
 	// the number of requests that are still in flight
 	private static AtomicInteger numOpenRequests = new AtomicInteger(0);
 
+	private static Logger logger = Logger.getLogger(NetworkHandler.class.getName());
+
 	public NetworkHandler() {
+		logger.fine("Initializing NetworkHandler");
 
 		// TODO add UI element controls
 //		loadingMessageProperty.set("TEST TEST");
@@ -88,6 +83,8 @@ public class NetworkHandler {
 	 * @param movie
 	 */
 	public static void downloadMovie(MovieFile movie, MetadataManager manager) {
+		logger.info(String.format("Downloading metadata for movie %s", movie.getFilename()));
+
 		// form the search query URL
 		String url = String.format("%s?api_key=%s&query=%s", DB_URL, API_KEY,
 				URLEncoder.encode(movie.getTitle(), StandardCharsets.UTF_8))
@@ -95,22 +92,26 @@ public class NetworkHandler {
 
 		// asynchronously send out the request
 		CompletableFuture.runAsync(() -> {
-			System.out.println("Making call for \"" + movie.getTitle() + "\" with year \"" + movie.getYear() + "\"");
+			logger.fine(String.format("Making call for \"%s\" with year \"%d\"", movie.getTitle(), movie.getYear()));
+			logger.fine(String.format("Search URL: %s", url));
+
 			numOpenRequests.getAndIncrement();
 			updateUIToggles();
-			
+
 			HttpURLConnection connection = openConnection(url);
 			if (connection != null) {
 				SearchResults results = parseSearchResults(url, connection);
 				connection.disconnect();
 				if (results != null) {
-					System.out.println("Got results, calling handler: " + results);
+					logger.fine(String.format("Recieved results for movie \"%s\" with year \"%d\"", movie.getTitle(),
+							movie.getYear()));
+					logger.finer(String.format("Results: %s", results));
 					manager.handleSearchResults(movie, results);
 				} else {
-					System.out.println("Failed to fetch results for movie " + movie);
+					logger.warning(String.format("Failed to fetch results for movie \"%s\"", movie));
 				}
 			}
-			
+
 			numOpenRequests.getAndDecrement();
 			updateUIToggles();
 			// TODO do I need a failure callback? retry requests or anything? update UI?
@@ -146,11 +147,13 @@ public class NetworkHandler {
 					return results;
 				}
 			} else {
-				System.out.println("Failed API call for URL: " + urlString + ". Response code: " + responseCode);
+				logger.warning(
+						String.format("Failed API call for URL \"%s\" (response code %d)", urlString, responseCode));
 				return null;
 			}
 		} catch (IOException e) {
-			System.out.println("Error making API call to " + urlString + ": " + e.getMessage());
+			logger.warning(String.format("Error making API call to \"%s\" (%s)", urlString, e.getMessage()));
+			e.printStackTrace(System.err);
 			return null;
 		}
 	}
@@ -163,18 +166,22 @@ public class NetworkHandler {
 	 */
 	private static HttpURLConnection openConnection(String urlString) {
 		HttpURLConnection connection = null;
+		logger.finer(String.format("Opening connection to \"%s\"", urlString));
 
 		try {
 			URL url = new URL(urlString);
+			logger.finer(String.format("URL created for \"%s\"", urlString));
 			connection = (HttpURLConnection) url.openConnection();
 			connection.setRequestMethod("GET");
 			connection.setRequestProperty("User-Agent", "Mozilla/5.0");
 
 			return connection;
 		} catch (MalformedURLException e) {
-			System.out.println("Failed to create URL " + urlString + ": " + e.getMessage());
+			logger.warning(String.format("Failed to create URL \"%s\" (%s)", urlString, e.getMessage()));
+			e.printStackTrace(System.err);
 		} catch (IOException e) {
-			System.out.println("Error making API call to " + urlString + ": " + e.getMessage());
+			logger.warning(String.format("Error making API call to \"%s\" (%s)", urlString, e.getMessage()));
+			e.printStackTrace(System.err);
 		}
 		return null;
 	}
