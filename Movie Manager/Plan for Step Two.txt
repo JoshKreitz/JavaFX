@@ -44,13 +44,16 @@ Local storage (located in movie dir):
 			- File[s]: photo<index>.jpg
 			- File: data.txt (description, release date, genres, etc)
 
-Up next:
-	- implement logging throughout program
+
+log levels:
 		- SEVERE: errors/exceptions
 		- WARNING: decision points, unexpected conditions
 		- INFO: state changes
 		- FINE: status updates
 		- FINER: data output
+
+
+Up next:
 		
 	- implement network handler spinner
 		- should be fixed
