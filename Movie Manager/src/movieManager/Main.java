@@ -81,7 +81,7 @@ public class Main extends Application {
 		primaryStage.setMinWidth(625);
 		primaryStage.setMaximized(false);
 
-		logger.fine("Showing main scene");
+		logger.info("Showing main scene");
 		primaryStage.setScene(scene);
 		primaryStage.show();
 	}

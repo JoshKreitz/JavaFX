@@ -8,15 +8,19 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
+import javafx.animation.PauseTransition;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.util.Duration;
 import movieManager.metadata.MetadataManager;
 import movieManager.metadata.MovieFile;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -45,8 +49,8 @@ public class NetworkHandler {
 	private static final String API_KEY = "15d2ea6d0dc1d476efbca3eba2b9bbfb";
 
 	// properties bound to network-status UI elements on the Shelf page
-	private static BooleanProperty displayLoadingSpinnerProperty = new SimpleBooleanProperty(true);
-	private static StringProperty loadingMessageProperty = new SimpleStringProperty("default");
+	private static BooleanProperty displayLoadingSpinnerProperty = new SimpleBooleanProperty(false);
+	private static StringProperty loadingMessageProperty = new SimpleStringProperty("");
 
 	// a mapper used to parse the JSON responses from the API
 	private static final ObjectMapper mapper = new ObjectMapper();
@@ -59,22 +63,18 @@ public class NetworkHandler {
 	public NetworkHandler() {
 		logger.fine("Initializing NetworkHandler");
 
-		// TODO add UI element controls
-//		loadingMessageProperty.set("TEST TEST");
-
 		// TODO REMOVE
-//		PauseTransition delay = new PauseTransition(Duration.seconds(3));
-//		delay.setOnFinished(e -> {
-//			System.out.println("gg");
-//			loadingMessageProperty.set("get so fucked");
-//		});
-//		delay.playFromStart();
-//		PauseTransition delay2 = new PauseTransition(Duration.seconds(4));
-//		delay2.setOnFinished(e -> {
-//			System.out.println("cya");
-//			displayLoadingSpinnerProperty.set(false);
-//		});
-//		delay2.playFromStart();
+		PauseTransition delay = new PauseTransition(Duration.seconds(1));
+		delay.setOnFinished(e -> {
+			displayLoadingSpinnerProperty.set(true);
+			loadingMessageProperty.set("get so fucked");
+		});
+		delay.playFromStart();
+		PauseTransition delay2 = new PauseTransition(Duration.seconds(3));
+		delay2.setOnFinished(e -> {
+			displayLoadingSpinnerProperty.set(false);
+		});
+		delay2.playFromStart();
 	}
 
 	/**
@@ -92,7 +92,7 @@ public class NetworkHandler {
 
 		// asynchronously send out the request
 		CompletableFuture.runAsync(() -> {
-			logger.fine(String.format("Making call for \"%s\" with year \"%d\"", movie.getTitle(), movie.getYear()));
+			logger.fine(String.format("Making call for \"%s\" with year \"%s\"", movie.getTitle(), movie.getYear()));
 			logger.fine(String.format("Search URL: %s", url));
 
 			numOpenRequests.getAndIncrement();
@@ -151,6 +151,9 @@ public class NetworkHandler {
 						String.format("Failed API call for URL \"%s\" (response code %d)", urlString, responseCode));
 				return null;
 			}
+		} catch (UnknownHostException e) {
+			logger.warning(String.format("Unable to resolve host (%s) in call to \"%s\"", e.getMessage(), urlString));
+			return null;
 		} catch (IOException e) {
 			logger.warning(String.format("Error making API call to \"%s\" (%s)", urlString, e.getMessage()));
 			e.printStackTrace(System.err);
