@@ -37,7 +37,13 @@ public class MovieFile {
 			title = filename.substring(0, parenIndex).trim();
 		} else {
 			year = "";
-			title = filename;
+
+			// remove file type
+			title = filename.substring(0, filename.lastIndexOf(".")).trim();
+
+			// remove resolution field
+			title = title.replaceAll("\\b\\d{3,4}p\\b", "");
+			title = title.trim();
 		}
 
 		logger.fine(String.format("Parsed filename \"%s\" into title \"%s\" and year \"%s\"", filename, title, year));
