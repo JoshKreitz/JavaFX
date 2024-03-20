@@ -47,6 +47,10 @@ public class SearchResults {
 		this.results = results;
 	}
 
+	public int getNumResults() {
+		return results != null ? results.size() : 0;
+	}
+
 	@Override
 	public String toString() {
 		return String.format("SearchResults[page=%d,total_results=%d,total_pages=%d,results.size=%d]", page,

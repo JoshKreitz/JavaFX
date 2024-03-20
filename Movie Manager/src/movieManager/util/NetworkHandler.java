@@ -64,17 +64,17 @@ public class NetworkHandler {
 		logger.fine("Initializing NetworkHandler");
 
 		// TODO REMOVE
-		PauseTransition delay = new PauseTransition(Duration.seconds(1));
-		delay.setOnFinished(e -> {
-			displayLoadingSpinnerProperty.set(true);
-			loadingMessageProperty.set("get so fucked");
-		});
-		delay.playFromStart();
-		PauseTransition delay2 = new PauseTransition(Duration.seconds(3));
-		delay2.setOnFinished(e -> {
-			displayLoadingSpinnerProperty.set(false);
-		});
-		delay2.playFromStart();
+//		PauseTransition delay = new PauseTransition(Duration.seconds(1));
+//		delay.setOnFinished(e -> {
+//			displayLoadingSpinnerProperty.set(true);
+//			loadingMessageProperty.set("get so fucked");
+//		});
+//		delay.playFromStart();
+//		PauseTransition delay2 = new PauseTransition(Duration.seconds(3));
+//		delay2.setOnFinished(e -> {
+//			displayLoadingSpinnerProperty.set(false);
+//		});
+//		delay2.playFromStart();
 	}
 
 	/**
@@ -103,9 +103,10 @@ public class NetworkHandler {
 				SearchResults results = parseSearchResults(url, connection);
 				connection.disconnect();
 				if (results != null) {
-					logger.fine(String.format("Recieved results for movie \"%s\" with year \"%d\"", movie.getTitle(),
-							movie.getYear()));
-					logger.finer(String.format("Results: %s", results));
+					logger.fine(String.format("Received %d result(s) for movie \"%s\" with year \"%s\"",
+							results.getNumResults(), movie.getTitle(), movie.getYear()));
+					if (results.getNumResults() > 0)
+						logger.finer(String.format("Results: %s", results));
 					manager.handleSearchResults(movie, results);
 				} else {
 					logger.warning(String.format("Failed to fetch results for movie \"%s\"", movie));
@@ -136,8 +137,8 @@ public class NetworkHandler {
 
 					// compact print
 					// TODO remove
-					System.out.println("\t" + urlString.substring(urlString.indexOf("&")) + " => NUMBER OF RESULTS: "
-							+ results.getResults().size());
+//					System.out.println("\t" + urlString.substring(urlString.indexOf("&")) + " => NUMBER OF RESULTS: "
+//							+ results.getResults().size());
 
 					// pretty print
 					// String prettyStaff1 =
@@ -197,11 +198,13 @@ public class NetworkHandler {
 				displayLoadingSpinnerProperty.set(true);
 			}
 			loadingMessageProperty.set(numOpen + "");
+			logger.finer("Displaying network spinner");
 		} else {
 			if (spinnderDisplayed) {
 				displayLoadingSpinnerProperty.set(false);
 			}
 			loadingMessageProperty.set("");
+			logger.finer("Hiding network spinner");
 		}
 	}
 
